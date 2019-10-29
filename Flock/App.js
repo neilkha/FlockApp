@@ -38,21 +38,31 @@ const User = t.struct ({
 const App: () => React$Node = () => {
   return (
     <View>
-      <Text style={{font-family: 'Roboto'}}>Flock</Text>
-      <Text>Find Activities. Make Friends </Text>
+      <View style ={styles.header}>
+        <Text style={{fontFamily: 'sans-serif', fontSize: 40}}>Flock</Text>
+      </View>
+
+      <View style = {styles.motto}>
+        <Text style = {{fontFamily: 'sans-serif'}}>Find Activities. Make Friends </Text>
+      </View>
 
       <View style = {styles.form}>
         <Form type={User} />
       </View>
 
-      <Text style={{color: 'blue'}}
-        onPress={() => Linking.openURL('http://google.com')}>
-        Forgot Password
-      </Text>
-      <Text style={{color: 'blue'}}
-        onPress={() => Linking.openURL('http://google.com')}>
-        Join the Community!
-      </Text>
+
+      <View style = {styles.links}>
+        <Text style={{color: 'blue'}}
+          onPress={() => Linking.openURL('http://google.com')}>
+          Forgot Password
+        </Text>
+        <Text style={{color: 'blue'}}
+          onPress={() => Linking.openURL('http://google.com')}>
+          Join the Community!
+        </Text>
+      </View>
+
+     
       <TouchableOpacity style ={styles.button}>
         <Text>Login</Text>
       </TouchableOpacity>
@@ -72,18 +82,25 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   button: {
+    marginTop: 32,
     alignItems: 'center',
-    backgroundColor: 'salmon',
+    backgroundColor: 'lightsalmon',
     padding: 10,
     
   },
   form: {
-
+    marginTop: 32,
     
   },
-  sectionContainer: {
+  header: {
+    marginTop: 20
+  },
+  links: {
     marginTop: 32,
-    paddingHorizontal: 24,
+
+  },
+  motto: {
+   color: 'blue'
   },
   sectionTitle: {
     fontSize: 24,
