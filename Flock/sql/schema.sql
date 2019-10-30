@@ -4,7 +4,7 @@ CREATE TABLE users(
   email VARCHAR(40) NOT NULL,
   password VARCHAR(256) NOT NULL,
   phone INTEGER NOT NULL,
-  picture VARCHAR(200) NOT NULL,
+  picture VARCHAR(200),
   PRIMARY KEY(username)
 );
 
@@ -27,9 +27,8 @@ CREATE TABLE events(
   eventID INTEGER NOT NULL,
   eventName VARCHAR(100) NOT NULL,
   host VARCHAR(40) NOT NULL,
-  password VARCHAR(256) NOT NULL,
   phone INTEGER NOT NULL,
-  picture VARCHAR(200) NOT NULL,
+  picture VARCHAR(200),
   PRIMARY KEY(eventID)
 );
 
