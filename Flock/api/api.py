@@ -2,14 +2,14 @@ from flask import Flask
 import flask
 import hashlib
 import uuid
-import model
+import Flock.model as model
+import Flock
 import sqlite3
-app = Flask(__name__)
 
-@app.route('/login', methods=['GET', 'POST'])
+@Flock.app.route('/login/', methods=['GET', 'POST'])
 def login():
   """Login Page."""
-  username = flask.request.form["user"]
+  username = flask.request.form["username"]
   unHashedPass = flask.request.form["password"]
   hashedPass = model.pass_hash(unHashedPass)
 
@@ -17,9 +17,7 @@ def login():
   database = model.get_db()
   cursor = database.cursor()
 
-  cursor.execute("SELECT U.password as password,\
-                  FROM users U WHERE U.username = ?;",
-                  (username,))
+  cursor.execute("SELECT password FROM events WHERE username = ?;",(username,))
   
   returnedPassword = cursor.fetchone()
 
