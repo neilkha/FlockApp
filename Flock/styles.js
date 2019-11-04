@@ -1,6 +1,10 @@
 
 //main-page UI styling
 import { StyleSheet } from 'react-native'
+import {
+
+  Colors
+} from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -15,6 +19,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 32,
+    marginRight: 32,
+    marginLeft: 32,
     alignItems: 'center',
     backgroundColor: 'lightsalmon',
     padding: 10,

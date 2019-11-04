@@ -19,3 +19,7 @@ VALUES (1, 'michjc'),
 (1, 'jag'),
 (2, 'awdeorio');
 
+INSERT INTO userSeenEvent(username, eventID)
+VALUES('michjc', 1),
+('jag', 1),
+('awdeorio', 2),
