@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, View, Text, TouchableOpacity } from 'react-native';
+import { Button, View, Text } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import t from 'tcomb-form-native';
@@ -20,29 +20,6 @@ class SwipeScreen extends React.Component {
   }
 }
 class HomeScreen extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {username: "", password: "", updated : false};
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  handleSubmit(){
-    // this.setState({
-    //   username: User.username,
-    //   password: User.password
-    // });
-    fetch('http://0.0.0.0:8000/login/', {
-      method: 'POST',
-      body: JSON.stringify({
-        user: this.state.username,
-        password: this.state.password
-      })
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      return responseJson.username;
-      this.props.navigation.navigate('UserEvents')
-    })
-  }
   render() {
     return (
       <View>
@@ -72,7 +49,7 @@ class HomeScreen extends React.Component {
       </View>
 
      
-      <TouchableOpacity onPress={this.handleSubmit()} style ={styles.button}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('UserEvents')} style ={styles.button}>
         <Text>Login</Text>
       </TouchableOpacity>
     </View>
