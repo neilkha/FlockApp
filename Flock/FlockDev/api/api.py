@@ -29,9 +29,49 @@ def login():
   return flask.jsonify(**context)
   
 @FlockDev.app.route('/events/<username>/', methods=['GET', 'POST'])
-def eventHandler():
+def availableEvents(username):
   """Update Events."""
 
-  # Get all the events that we the user has not seen
+  # get db
+  database = FlockDev.model.get_db()
+  cursor = database.cursor()
+
+  # return all the events that a user has not seen
+  eventQuery = "SELECT * FROM events WHERE eventID NOT IN \
+    eventID FROM userSeenEvent WHERE username = ?;"
   
- /<int:eventID>, meothiodthods=[]''GnotInterested                    ET, , ''POSTED:def notIntereestedstedevents/()@FLOC:username, eventIDpassreturnlockDev.app.roteute()''ww/events/Interested/<username>/<int:eventID>,                    methods=[]''GET, ''POSETtT:def Interestedinteressteested()username, aeeventID:eenEvent FROmM eventID where        \WHERE WhereHERE USERusername = ?;cursor.exectueute():S""SEquery contextflask.jsonifty(**)context.return = cursor.fetchall())   @ @ # ereturn the fetchall jsonifyinssertuserSeenE""""Add Update the SQL databsase with resnot Interested."""WOWOWOW""curs# get a # get the databasecursor = database = FlockDev.model.get_debb())cursorf = dt = database.curossor())query =  ""INSERT TINTO userSeenEvent()username, eventID ValueLAALUES \      ()?,?,?, ()CURSORcursorupdate the userSeenEvent Table = N.exectueute()""query, ()username, eventID  """"Update the daS SQL database with Interested ."""  UserUseruserSeeneventAttendees = quQueryEvent!Q = \""INSERT INTO eventAttendees()eventId, usernaeme VALEIES VALUES\()?,?"cursor.e                                       xecute()userSeenEvent, ()username. , eventID;cursor.execute()eventAttendeesQuery, ()userneeventID, username*eventID 
+  context = cursor.execute(eventQuery, (username,))
+
+  return flask.jsonify(**context)
+
+
+@FlockDev.app.route('/events/Interested/<username>/<int:eventID>',
+                    methods = ['GET','POST'])
+def interestedEvents(username, eventID):
+  """Update the table to reflect a user has seen and is interested."""
+
+  # get db
+  database = FlockDev.model.get_db()
+  cursor = database.cursor()
+
+  # insert into seen
+  seenQuery = "INSERT INTO userSeenEvent(eventId, username) VALUES(?,?);"
+  cursor.execute(seenQuery, (username, eventID))
+  # insert into attending
+  eventAttendeesQuery  = "INSERT INTO eventAttendees(eventID, username)\
+     VALUES(?,?);"
+  cursor.execute(eventAttendeesQuery, (username, eventID))
+
+
+@FlockDev.app.route('/events/notInterestedEvents/<username>/<int:eventID>/',
+                    methods = ['GET', 'POST'])
+def notInterestedEvents(username, eventID):
+  """Update the table to reflect a user has seen and is not interested."""
+
+  # get db
+  database = FlockDev.model.get_db()
+  cursor = database.cursor()
+
+  # insert into seen
+  seenQuery = "INSERT INTO userSeenEvent(eventId, username) VALUES(?,?)";
+  cursor.execute(seenQuery, (username, eventID))
