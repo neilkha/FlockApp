@@ -53,10 +53,26 @@ case $1 in
     ;;
 
   "dump")
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM eventAttendees'
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM events'
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM usersInfo'
+    echo " "
+    echo " USER TABLE"
+    echo " "
     sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM users'
+    echo " "
+    echo " USERINFO TABLE"
+    echo " "
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM usersInfo'
+    echo " "
+    echo " EVENTS TABLE"
+    echo " "
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM events'
+    echo " "
+    echo " EVENTATTENDEES TABLE"
+    echo " "
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM eventAttendees'
+    echo " "
+    echo " USERSEENEVENTS TABLE"
+    echo " "
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM userSeenEvent'
     ;;
 
   *)
