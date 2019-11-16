@@ -1,58 +1,57 @@
 import React from 'react';
-import { Button, View, Text } from 'react-native';
+import { AppRegistry, Button, View, Text, TouchableOpacity } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import t from 'tcomb-form-native';
 import {styles} from './styles.js'
-const Form = t.form.Form;
+import { LoginButton } from 'react-native-fbsdk';
 
-const User = t.struct ({
-  username: t.String,
-  password: t.String,
-});
+var FBLoginButton = require('./FBLoginButton');
+
 class SwipeScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Details Screen</Text>
+        <Text>Will show events for user {this.props.navigation.getParam('user', 'default value')}</Text>
       </View>
     );
   }
 }
+
 class HomeScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {username: "", password: "", updated : false};
+  }
+
+  handleSubmit(){
+    
+    const value = this._form.getValue(); // use that ref to get the form value
+    if(value == null){
+      return;
+    }
+    this.props.navigation.navigate('UserEvents', {
+      user: value.username
+    })
+  
+  }
+
   render() {
     return (
       <View>
       
-      <View style ={styles.header}>
-        <Text style={{fontFamily: 'sans-serif', fontSize: 40}}>Flock</Text>
+        <View style ={styles.header}>
+          <Text style={{fontFamily: 'sans-serif', fontSize: 40}}>Flock</Text>
+        </View>
+
+        <View style = {styles.motto}>
+          <Text style = {{fontFamily: 'sans-serif'}}>Find Activities. Make Friends </Text>
+        </View>
+
+        <FBLoginButton />
+
+      
       </View>
-
-      <View style = {styles.motto}>
-        <Text style = {{fontFamily: 'sans-serif'}}>Find Activities. Make Friends </Text>
-      </View>
-
-      <View style = {styles.form}>
-        <Form type={User} />
-      </View>
-
-
-      <View style = {styles.links}>
-        <Text style={{color: 'blue'}}
-          onPress={() => Linking.openURL('http://google.com')}>
-          Forgot Password
-        </Text>
-        <Text style={{color: 'blue'}}
-          onPress={() => Linking.openURL('http://google.com')}>
-          Join the Community!
-        </Text>
-      </View>
-
-     
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('UserEvents')} style ={styles.button}>
-        <Text>Login</Text>
-      </TouchableOpacity>
-    </View>
       
     );
   }
