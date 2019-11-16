@@ -41,8 +41,8 @@ CREATE TABLE eventAttendees(
 );
 
 CREATE TABLE userSeenEvent(
-  username INTEGER NOT NULL,
+  username VARCHAR(20) NOT NULL,
   eventID INTEGER NOT NULL,
-  PRIMARY KEY(username),
+  PRIMARY KEY(eventID, username),
   FOREIGN KEY(username) REFERENCES users ON DELETE CASCADE ON UPDATE CASCADE
 );
