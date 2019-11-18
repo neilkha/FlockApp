@@ -58,21 +58,17 @@ case $1 in
     echo " "
     sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM users'
     echo " "
-    echo " USERINFO TABLE"
+    echo " TAGS TABLE"
     echo " "
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM usersInfo'
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM tags'
     echo " "
     echo " EVENTS TABLE"
     echo " "
     sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM events'
     echo " "
-    echo " EVENTATTENDEES TABLE"
+    echo " USEREVENTINFO TABLE"
     echo " "
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM eventAttendees'
-    echo " "
-    echo " USERSEENEVENTS TABLE"
-    echo " "
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM userSeenEvent'
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM userEventInfo'
     ;;
 
   *)
