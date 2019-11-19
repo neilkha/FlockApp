@@ -8,38 +8,10 @@ import { LoginButton, LoginManager,
   AccessToken,
   GraphRequest,
   GraphRequestManager } from 'react-native-fbsdk';
+import { thisExpression } from '@babel/types';
+
 
 var FBLoginButton = require('./FBLoginButton');
-
-class SwipeScreen extends React.Component {
-  constructor(props){
-    super(props);
-    
-  }
-  
-  
-  componentDidMount(){
-    fetch('10.0.2.2/events/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstParam: 'yourValue',
-        secondParam: 'yourOtherValue',
-      }),
-    });
-  }
-
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Will show events for user {this.props.navigation.getParam('name', 'default value')}</Text>
-      </View>
-    );
-  }
-}
 
 class HomeScreen extends React.Component {
   constructor(props){
@@ -90,6 +62,7 @@ class HomeScreen extends React.Component {
         email: result.email,
       });
       console.log("The state of name is " + this.state.name)
+      this.props.navigation.navigate('UserEvents', {name:this.state.name, email: this.state.email});
     }
   }
   // async facebookLogin() {
@@ -135,8 +108,8 @@ class HomeScreen extends React.Component {
       
       console.log("first result is " + JSON.stringify(result))
       
-      this.FBGraphRequest('email,name', this.FBLoginCallback).then(console.log("state changed to " + this.state.name));
-      this.props.navigation.navigate('UserEvents', {name:this.state.name});
+      this.FBGraphRequest('email,name', this.FBLoginCallback).then((result, err) => console.log("state changed to " + this.state.name));
+      
     }
   }
   render() {
