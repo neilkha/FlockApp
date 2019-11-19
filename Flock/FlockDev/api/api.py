@@ -29,7 +29,7 @@ def login():
   # maybe put session
   return flask.jsonify(**context)
   
-@FlockDev.app.route('/events/<email>/', methods=['GET', 'POST'])
+@FlockDev.app.route('/events/<uniquename>/<endemail>', methods=['GET', 'POST'])
 def availableEvents(email):
   """Update Events."""
   # get db
@@ -46,7 +46,7 @@ def availableEvents(email):
     (SELECT DISTINCT VE.eventID \
     FROM userEventInfo UEI, View_Events VE, users U \
     WHERE UEI.eventID == VE.eventID AND UEI.userID == U.userID \
-    AND U.email == " + email + ");"
+    AND U.email == " + uniquename + "@" + endemail + ");"
   
   context = cursor.execute(eventQuery, (email,))
 
