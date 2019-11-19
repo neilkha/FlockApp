@@ -9,7 +9,7 @@ import sqlite3
 @FlockDev.app.route('/login/', methods=['GET', 'POST'])
 def login():
   """Login Page."""
-  username = flask.request.form['user']
+  email = flask.request.form['email']
   unHashedPass = flask.request.form['pword']
   
   # get db
@@ -29,24 +29,33 @@ def login():
   # maybe put session
   return flask.jsonify(**context)
   
-@FlockDev.app.route('/events/<uniquename>/<endemail>', methods=['GET', 'POST'])
-def availableEvents(email):
+@FlockDev.app.route('/events/<beginEmail>/<endEmail>', methods=['GET', 'POST'])
+def availableEvents(beginEmail, endEmail):
   """Update Events."""
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
 
+  email = beginEmail + '@' + endEmail
   # return all the events that a user has not seen
   # eventQuery = "SELECT * FROM events WHERE eventID NOT IN \
   #   eventID FROM userSeenEvent WHERE username = ?;"
+
+  # "DROP TABLE IF EXISTS View_Events;" Add this query
+
   eventQuery = "CREATE VIEW View_Events (eventID) AS \
-    SELECT DISTINCT eventID FROM events; \
-    SELECT DISTINCT eventID FROM View_Events \
+    SELECT DISTINCT eventID FROM events;"
+
+  context = cursor.execute(eventQuery)
+
+  
+
+  eventQuery = "SELECT DISTINCT eventID FROM View_Events \
     EXCEPT \
-    (SELECT DISTINCT VE.eventID \
+    SELECT DISTINCT VE.eventID \
     FROM userEventInfo UEI, View_Events VE, users U \
     WHERE UEI.eventID == VE.eventID AND UEI.userID == U.userID \
-    AND U.email == " + uniquename + "@" + endemail + ");"
+    AND U.email == ?;"
   
   context = cursor.execute(eventQuery, (email,))
 
