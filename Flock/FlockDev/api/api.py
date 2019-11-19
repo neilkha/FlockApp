@@ -17,20 +17,20 @@ def login():
   cursor = database.cursor()
 
   #get password from database corresponding to username
-  cursor.execute("SELECT pword FROM users WHERE username = ?;",(username,))
+  cursor.execute("SELECT passcode FROM users WHERE email = ?;",(email,))
   returnedPassword = cursor.fetchone()["pword"]
 
   context = {}
   
   #return username if the login is successful
   if(FlockDev.model.passwords_match(unHashedPass, returnedPassword)):
-    context['username'] = username
+    context['email'] = email
   
   # maybe put session
   return flask.jsonify(**context)
   
-@FlockDev.app.route('/events/<fullname>/', methods=['GET', 'POST'])
-def availableEvents(fullname):
+@FlockDev.app.route('/events/<email>/', methods=['GET', 'POST'])
+def availableEvents(email):
   """Update Events."""
   # get db
   database = FlockDev.model.get_db()
@@ -42,12 +42,13 @@ def availableEvents(fullname):
   eventQuery = "CREATE VIEW View_Events (eventID) AS \
     SELECT DISTINCT eventID FROM events; \
     SELECT DISTINCT eventID FROM View_Events \
-    MINUS \
-    SELECT DISTINCT VE.eventID \
-    FROM userEventInfo UEI, View_Events VE \
-    WHERE UEI.eventID == VE.eventID AND UEI.userID == " + fullname + ";"
+    EXCEPT \
+    (SELECT DISTINCT VE.eventID \
+    FROM userEventInfo UEI, View_Events VE, users U \
+    WHERE UEI.eventID == VE.eventID AND UEI.userID == U.userID \
+    AND U.email == " + email + ");"
   
-  context = cursor.execute(eventQuery, (fullname,))
+  context = cursor.execute(eventQuery, (email,))
 
   return flask.jsonify(**context)
 
