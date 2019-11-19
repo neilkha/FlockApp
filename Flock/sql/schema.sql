@@ -1,5 +1,5 @@
 CREATE TABLE users(
-  userID VARCHAR(20) NOT NULL,
+  userID INTEGER NOT NULL,
   fullname VARCHAR(40) NOT NULL,
   email VARCHAR(40) NOT NULL,
   pword VARCHAR(256) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE events(
 );
 
 CREATE TABLE userEventInfo(
-  userID VARCHAR(20) NOT NULL,
+  userID INTEGER NOT NULL,
   eventID INTEGER NOT NULL,
   commitStatus INTEGER NOT NULL,
   PRIMARY KEY(userID, eventID),
