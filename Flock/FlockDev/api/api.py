@@ -57,9 +57,20 @@ def availableEvents(beginEmail, endEmail):
     WHERE UEI.eventID == VE.eventID AND UEI.userID == U.userID \
     AND U.email == ?;"
   
-  context = cursor.execute(eventQuery, (email,))
+  context = cursor.execute(eventQuery, (email,)).fetchall()
 
-  return flask.jsonify(**context)
+  eventInfo = {}
+  i = 0
+  for element in context:
+    eventID = element['eventID']
+    query = "SELECT eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
+    
+    eventInfo[str(i)] = cursor.execute(query).fetchone()
+    i += 1
+
+
+  
+  return flask.jsonify(**eventInfo)
 
 
 @FlockDev.app.route('/events/Interested/<username>/<int:eventID>',

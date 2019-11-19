@@ -28,6 +28,7 @@ CREATE TABLE tags(
 CREATE TABLE events(
   eventID INTEGER NOT NULL,
   eventName VARCHAR(100) NOT NULL,
+  eventDescription VARCHAR(200) NOT NULL,
   host VARCHAR(40) NOT NULL,
   phone INTEGER NOT NULL,
   picture VARCHAR(200),
