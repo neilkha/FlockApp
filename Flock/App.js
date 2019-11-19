@@ -3,13 +3,13 @@ import { AppRegistry, Button, View, Text, Image, TouchableOpacity } from 'react-
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import t from 'tcomb-form-native';
-import {styles} from './styles.js'
+import {styles} from './styles.js';
 import { LoginButton, LoginManager,
   AccessToken,
   GraphRequest,
   GraphRequestManager } from 'react-native-fbsdk';
 
-//var FBLoginButton = require('./FBLoginButton');
+var FBLoginButton = require('./FBLoginButton');
 
 class SwipeScreen extends React.Component {
   constructor(props){
@@ -46,8 +46,8 @@ class HomeScreen extends React.Component {
     super(props);
     this.FBGraphRequest = this.FBGraphRequest.bind(this);
     this.FBLoginCallback = this.FBLoginCallback.bind(this);
-    this.facebookLogin = this.facebookLogin.bind(this);
     this.onPressHandler = this.onPressHandler.bind(this);
+    this.onFacebookLoginFinished = this.onFacebookLoginFinished.bind(this);
     this.state = {name: "", email: "", loading : false};
 
   }
@@ -57,6 +57,7 @@ class HomeScreen extends React.Component {
   }
   async FBGraphRequest(fields, callback) {
     const accessData = AccessToken.getCurrentAccessToken();
+    console.log("in Graph request")
     // Create a graph request asking for user information
     const infoRequest = new GraphRequest('/me', {
       accessToken: accessData.accessToken,
@@ -65,16 +66,16 @@ class HomeScreen extends React.Component {
           string: fields
         }
       }
-    }, callback.bind(this));
+    }, callback);
     // Execute the graph request created above
     alert("info request is " + infoRequest)
     alert("fields is " + fields)
     new GraphRequestManager().addRequest(infoRequest).start();
   }
-  async FBLoginCallback(error, result) {
+  FBLoginCallback(error, result) {
     
     if (error) {
-      console.error("error " + error)
+      console.log("error " + JSON.stringify(error))
       this.setState({
         loading: false
       });
@@ -82,42 +83,62 @@ class HomeScreen extends React.Component {
     } else {
       // Retrieve and save user details in state. In our case with 
       // Redux and custom action saveUser
-      console.log("result is " + result)
+      console.log("graph result is " + JSON.stringify(result))
       this.setState({
        
         name: result.name,
         email: result.email,
       });
+      console.log("The state of name is " + this.state.name)
     }
   }
-  async facebookLogin() {
-    // native_only config will fail in the case that the user has
-    // not installed in his device the Facebook app. In this case we
-    // need to go for webview.
-    let result;
-    try {
-      LoginManager.setLoginBehavior('WEB_ONLY');
-      result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-    } catch (webError) {
-      // show error message to the user if none of the FB screens
-      // did not open
-    }
-
-    // handle the case that users clicks cancel button in Login view
-    if (result.isCancelled) {
-      this.setState({
-        loading: false,
-      });
-    } else {
-      // Create a graph request asking for user information
-      await this.FBGraphRequest('email', this.FBLoginCallback);
-    }
-  }
+  // async facebookLogin() {
+  //   // native_only config will fail in the case that the user has
+  //   // not installed in his device the Facebook app. In this case we
+  //   // need to go for webview.
+  //   let result;
+  //   try {
+  //     LoginManager.setLoginBehavior('WEB_ONLY');
+  //     alert("trying await")
+  //     LoginManager.logInWithPermissions(['public_profile, email'])
+  //     .then((result) =>{
+  //       if(result.isCancelled){
+  //         alert("Result returned cancelled");
+  //       }
+  //     });
+  //   } catch (webError) {
+  //     // show error message to the user if none of the FB screens
+  //     // did not open
+  //   }
+  //   console.log(result);
+  //   // handle the case that users clicks cancel button in Login view
+  //   if (result.isCancelled) {
+  //     this.setState({
+  //       loading: false,
+  //     });
+  //   } else {
+  //     // Create a graph request asking for user information
+  //     await this.FBGraphRequest('email', this.FBLoginCallback);
+  //   }
+  // }
   onPressHandler(){
     
     this.facebookLogin().then(() => {alert("name is " + this.state.name); this.props.navigation.navigate('UserEvents', {name: this.state.name }) })
   }
-
+  onFacebookLoginFinished(error, result){
+   
+    if (error) {
+      alert("Login failed with error: " + error.message);
+    } else if (result.isCancelled) {
+      alert("Login was cancelled");
+    } else {
+      
+      console.log("first result is " + JSON.stringify(result))
+      
+      this.FBGraphRequest('email,name', this.FBLoginCallback).then(console.log("state changed to " + this.state.name));
+      this.props.navigation.navigate('UserEvents', {name:this.state.name});
+    }
+  }
   render() {
     return (
       <View styles = {styles.body}>
@@ -129,12 +150,17 @@ class HomeScreen extends React.Component {
           
         </View>
         <View>
-          <Text style = {{fontFamily: 'sans-serif'}}>Find Activities. Make Friends </Text>
+          <Text style = {{textAlign: 'center'}}>Find Activities. Make Friends </Text>
         </View>
         <View style = {{justifyContent: 'flex-end'}}>
+        <LoginButton
+            permissions={["public_profile", "email"]}
+            onLoginFinished={(error, result) => this.onFacebookLoginFinished(error,result)}
+            onLogoutFinished={() => alert("User logged out")}/> 
+         
+          {/* <Button onPress={this.onPressHandler}
+          title="Find Friends" />
           {/* <FBLoginButton /> */}
-          <Button onPress={this.onPressHandler}
-          title="Click Here to Sign In!"/>
         </View>
 
         
@@ -148,9 +174,21 @@ class HomeScreen extends React.Component {
 
 
 const AppNavigator = createStackNavigator({
-  Home: HomeScreen,
-  UserEvents: SwipeScreen,
+  Home: {
+    screen: HomeScreen,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  
+  UserEvents: {
+    screen:SwipeScreen,
+    navigationOptions: {
+      header: null,
+    },
+  }
   // CreateEvent: EventScreen
+  
 },
 {
   initialRouteName: 'Home'
