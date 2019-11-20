@@ -10,26 +10,30 @@ import sqlite3
 def login():
   """Login Page."""
   email = flask.request.form['email']
-  unHashedPass = flask.request.form['pword']
+  unHashedPass = flask.request.form['password']
   
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
 
   #get password from database corresponding to username
-  cursor.execute("SELECT passcode FROM users WHERE email = ?;",(email,))
+  returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
   returnedPassword = cursor.fetchone()["pword"]
+  print(returnedPassword)
 
   context = {}
   
-  #return username if the login is successful
+  # return username if the login is successful
   if(FlockDev.model.passwords_match(unHashedPass, returnedPassword)):
     context['email'] = email
+  else:
+    context['message'] = "Error: email or password is incorrect"
+    context['status_code'] = 404
   
   # maybe put session
   return flask.jsonify(**context)
   
-@FlockDev.app.route('/events/<beginEmail>/<endEmail>', methods=['GET', 'POST'])
+@FlockDev.app.route('/events/<beginEmail>/<endEmail>', methods=['GET'])
 def availableEvents(beginEmail, endEmail):
   """Update Events."""
   # get db
@@ -75,7 +79,13 @@ def getStatusEvents(beginEmail, endEmail, status):
   cursor = database.cursor()
 
   email = beginEmail + '@' + endEmail
-  
+
+  if int(status) < 0 or int(status) > 2:
+    context = {}
+    context['message'] = "Error: status does not exist"
+    context['status_code'] = 404
+    return flask.jsonify(**context)
+    
   eventQuery = "SELECT DISTINCT UEI.eventID \
                 FROM users U, userEventInfo UEI \
                 WHERE U.email = ? AND U.userID = UEI.userID \
@@ -103,7 +113,13 @@ def postEventStatus(beginEmail, endEmail, eventID, status):
 
   email = beginEmail + '@' + endEmail
 
-  # # grab the userID using the user email
+  if int(status) < 0 or int(status) > 2:
+    context = {}
+    context['message'] = "Error: status does not exist"
+    context['status_code'] = 404
+    return flask.jsonify(**context)
+
+  # grab the userID using the user email
   userQuery = "SELECT userID FROM users \
                WHERE users.email = ?;"
   userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
@@ -121,16 +137,3 @@ def postEventStatus(beginEmail, endEmail, eventID, status):
   return flask.jsonify(**context)
   
 
-@FlockDev.app.route('/events/notInterestedEvents/<username>/<int:eventID>/',
-                    methods = ['GET', 'POST'])
-def notInterestedEvents(username, eventID):
-  """Update the table to reflect a user has seen and is not interested."""
-  # get db
-  database = FlockDev.model.get_db()
-  cursor = database.cursor()
-
-  # insert into seen
-  seenQuery = "INSERT INTO userSeenEvent(username, eventID)VALUES(?,?);"
-  database.execute(seenQuery, (username, int(eventID)))
-
-  return "executed"
