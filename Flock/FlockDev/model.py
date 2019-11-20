@@ -37,6 +37,7 @@ def passwords_match(password_input, password_correct):
     salt = password_correct.rsplit('$', 2)[1]
 
     return sha512sum(password_input, salt) == password_correct
+
 def dict_factory(cursor, row):
     """Convert database row objects to a dictionary."""
     output = {}
