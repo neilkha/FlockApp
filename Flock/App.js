@@ -9,9 +9,42 @@ import { LoginButton, LoginManager,
   GraphRequest,
   GraphRequestManager } from 'react-native-fbsdk';
 import { thisExpression } from '@babel/types';
-
+// import {SwipeScreen} from './screens/SwipeScreen'
 
 var FBLoginButton = require('./FBLoginButton');
+class SwipeScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {name: "", events:[]}
+  }
+  
+  
+  componentDidMount(){
+    
+    
+    
+
+  }
+
+  render() {
+    let name = this.props.navigation.getParam('name');
+    
+    let email = this.props.navigation.getParam('email').split("@")
+    console.log("calling fetch from swipescreen")
+    fetch('https://35.0.27.244:8000/events/' + email[0] + "/" + email[1])
+    .then((response) =>{
+      console.log("we got a response from api")
+    })
+    .catch(error => console.log("error is :" + error));
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+
+        {/* <Swiper></Swiper> */}
+        <Text>Will show events for user {this.props.navigation.getParam('name', 'default value')}</Text>
+      </View>
+    );
+  }
+}
 
 class HomeScreen extends React.Component {
   constructor(props){
@@ -155,7 +188,7 @@ const AppNavigator = createStackNavigator({
   },
   
   UserEvents: {
-    screen:SwipeScreen,
+    screen: SwipeScreen,
     navigationOptions: {
       header: null,
     },
