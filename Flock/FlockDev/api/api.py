@@ -75,7 +75,7 @@ def getStatusEvents(beginEmail, endEmail, status):
   cursor = database.cursor()
 
   email = beginEmail + '@' + endEmail
-
+  
   eventQuery = "SELECT DISTINCT UEI.eventID \
                 FROM users U, userEventInfo UEI \
                 WHERE U.email = ? AND U.userID = UEI.userID \
@@ -93,26 +93,26 @@ def getStatusEvents(beginEmail, endEmail, status):
   return flask.jsonify(**eventInfo)
 
 
-@FlockDev.app.route('/events/postEventStatus/<userID>/<int:eventID>/<int:status>',
+@FlockDev.app.route('/events/postEventStatus/<beginEmail>/<endEmail>/<eventID>/<status>',
                     methods = ['POST'])
-def postEventStatus(userID, eventID, status):
+def postEventStatus(beginEmail, endEmail, eventID, status):
   """Update the table to reflect a user has seen and is interested."""
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
 
-  # email = beginEmail + '@' + endEmail
+  email = beginEmail + '@' + endEmail
 
   # # grab the userID using the user email
-  # userQuery = "SELECT userID FROM users \
-  #              WHERE users.email = ?;"
-  # context = cursor.execute(userQuery, (email,)).fetchall()
-  # return flask.jsonify(**context)
+  userQuery = "SELECT userID FROM users \
+               WHERE users.email = ?;"
+  userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
 
   # insert into userEventInfo table that user is interested
   eventQuery = "INSERT INTO userEventInfo (userID, eventID, commitStatus) \
                 VALUES(?,?,?);"
   cursor.execute(eventQuery, (userID, eventID, status))
+  database.commit()
 
   context = {}
   context['message'] = "Uploaded"
