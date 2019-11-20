@@ -213,6 +213,7 @@ def addEvent(name, description, host, phone):
   
 
 # update user info
+# curl -X GET http://localhost:8000/user/set/michjc/umich.edu
 @FlockDev.app.route('/user/set/<beginEmail>/<endEmail>', methods=['POST'])
 def updateUser(beginEmail, endEmail):
   # get db
@@ -220,6 +221,13 @@ def updateUser(beginEmail, endEmail):
   cursor = database.cursor()
 
   email = beginEmail + '@' + endEmail
+
+  emailQuery = "SELECT email FROM users WHERE email= '" + email + "';"
+  emailQuery = cursor.execute(emailQuery).fetchone()
+
+  if emailQuery is None:
+    return flask.jsonify(**makeContext("Email does not exist", 400))
+    
   fullname = flask.request.form['fullname']
   phone = flask.request.form['phone']
   picture = flask.request.form['picture']
@@ -231,7 +239,9 @@ def updateUser(beginEmail, endEmail):
   return flask.jsonify(**makeContext("Updated User Info Successfully", 207))
 
 
-# send user info 
+# Get user info
+# curl -X GET http://localhost:8000/user/get/michjc/umich.edu
+# curl -X GET http://localhost:8000/user/get/michjc/umich.ed
 @FlockDev.app.route('/user/get/<beginEmail>/<endEmail>', methods=['GET'])
 def sendUserInfo(beginEmail, endEmail):
   # get db
@@ -239,22 +249,37 @@ def sendUserInfo(beginEmail, endEmail):
   cursor = database.cursor()
 
   email = beginEmail + "@" + endEmail
+
+  emailQuery = "SELECT email FROM users WHERE email= '" + email + "';"
+  emailQuery = cursor.execute(emailQuery).fetchone()
+
+  if emailQuery is None:
+    return flask.jsonify(**makeContext("Email does not exist", 400))
+
   userQuery = "SELECT userID, fullname, email, pword, phone, picture, tagID FROM users WHERE email= '" + email + "';"
   userInfo = cursor.execute(userQuery).fetchone()
   print(userInfo)
   return flask.jsonify(**userInfo)
   
 
-# get all tags
+# Get all tags for a user or event
+# curl -X GET http://localhost:8000/tags/get/2
+# curl -X GET http://localhost:8000/tags/get/8
 @FlockDev.app.route('/tags/get/<tagID>', methods=['GET'])
 def getAllTags(tagID):
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
 
+  tagQuery = "SELECT MAX(tagID) FROM tags"
+  tagQuery = cursor.execute(tagQuery).fetchone()
+
+  if tagQuery['MAX(tagID)'] < int(tagID):
+    return flask.jsonify(**makeContext("Tag ID does not exist", 400))
+  
   tagQuery = "SELECT * FROM tags WHERE tagID=?;"
   tagInfo = cursor.execute(tagQuery, (tagID)).fetchone()
-
+  
   return flask.jsonify(**tagInfo)
 
 
