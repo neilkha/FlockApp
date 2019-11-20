@@ -1,1 +1,1 @@
-from FlockDev.api.api import login, availableEvents, interestedEvents, notInterestedEvents
+from FlockDev.api.api import login, availableEvents, getStatusEvents, notInterestedEvents

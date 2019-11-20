@@ -29,8 +29,8 @@ case $1 in
     echo "+ sqlite3 var/Flock.sqlite3 < sql/schema.sql"
     sqlite3 var/Flock.sqlite3 < sql/data.sql
     echo "+ sqlite3 var/Flock.sqlite3 < sql/data.sql"
-    #cp sql/uploads/* var/uploads/
-    #echo "+ cp sql/uploads/* var/uploads/"
+    cp sql/uploads/* var/uploads/
+    echo "+ cp sql/uploads/* var/uploads/"
     fi
     ;;
 
@@ -48,8 +48,8 @@ case $1 in
     echo "+ sqlite3 var/Flock.sqlite3 < sql/schema.sql"
     sqlite3 var/Flock.sqlite3 < sql/data.sql
     echo "+ sqlite3 var/Flock.sqlite3 < sql/data.sql"
-    #cp sql/uploads/* var/uploads/
-    #echo "+ cp sql/uploads/* var/uploads/"
+    cp sql/uploads/* var/uploads/
+    echo "+ cp sql/uploads/* var/uploads/"
     ;;
 
   "dump")
@@ -60,19 +60,15 @@ case $1 in
     echo " "
     echo " TAGS TABLE"
     echo " "
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM sersInfo'
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM tags'
     echo " "
     echo " EVENTS TABLE"
     echo " "
     sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM events'
     echo " "
-    echo " EVENTATTENDEES TABLE"
+    echo " USEREVENTINFO TABLE"
     echo " "
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM eventAttendees'
-    echo " "
-    echo " USERSEENEVENTS TABLE"
-    echo " "
-    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM userSeenEvent'
+    sqlite3 -batch -line var/Flock.sqlite3 'SELECT * FROM userEventInfo'
     ;;
 
   *)
