@@ -41,8 +41,6 @@ def availableEvents(beginEmail, endEmail):
   # eventQuery = "SELECT * FROM events WHERE eventID NOT IN \
   #   eventID FROM userSeenEvent WHERE username = ?;"
 
-  # "DROP TABLE IF EXISTS View_Events;" Add this query
-
   eventQuery = "CREATE VIEW View_Events (eventID) AS \
     SELECT DISTINCT eventID FROM events;"
 
@@ -57,9 +55,20 @@ def availableEvents(beginEmail, endEmail):
     WHERE UEI.eventID == VE.eventID AND UEI.userID == U.userID \
     AND U.email == ?;"
   
-  context = cursor.execute(eventQuery, (email,))
+  context = cursor.execute(eventQuery, (email,)).fetchall()
 
-  return flask.jsonify(**context)
+  eventInfo = {}
+  i = 0
+  for element in context:
+    eventID = element['eventID']
+    query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
+    eventInfo[str(i)] = cursor.execute(query).fetchone()
+    i += 1
+
+  eventQuery = "DROP VIEW IF EXISTS View_Events;"
+  context = cursor.execute(eventQuery)
+  
+  return flask.jsonify(**eventInfo)
 
 
 @FlockDev.app.route('/events/Interested/<username>/<int:eventID>',
