@@ -37,6 +37,8 @@ def login():
     return flask.jsonify(**makeContext("Error: email or password is incorrect", 404))
 
 
+# curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/user/create 
+# -d '{"email":"michjc@gmail.com", "fullname":"Michael Cafarella", "pword":"password", "phone":"2483124234"}'
 @FlockDev.app.route('/user/create/', methods=['GET', 'POST'])
 def newUser():
   """Add a new user."""
@@ -46,18 +48,19 @@ def newUser():
 
   print("making new user")
 
-  userInfo = flask.request.args['userInfo']
-  email = userInfo['email']
-  fullname = userInfo['fullname']
-  pword = userInfo['pword']
-  phone = userInfo['phone']
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
 
-  email = beginEmail + "@" + endEmail
+  # userInfo = flask.request.args['userInfo']
+  # email = userInfo['email']
+  # fullname = userInfo['fullname']
+  # pword = userInfo['pword']
+  # phone = userInfo['phone']
   
-  hashPass = FlockDev.model.pass_hash(str(pword))
+  hashPass = FlockDev.model.pass_hash(str(info['pword']))
 
   loginQuery = "INSERT INTO users VALUES (?, ?, ?, ?, NULL, NULL);"
-  cursor.execute(loginQuery, (fullname, email, hashPass, phone))
+  cursor.execute(loginQuery, (info['fullname'], info['email'], hashPass, info['phone']))
 
   return flask.jsonify(**makeContext("New Account Created", 200))
   
