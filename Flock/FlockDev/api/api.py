@@ -7,34 +7,38 @@ import FlockDev
 import sqlite3
 import json
 
-@FlockDev.app.route('/login/', methods=['GET'])
+# curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/login/ 
+# -d '{"email":"michjc@gmail.com", "fullname":"Michael Cafarella", "pword":"password", "phone":"2483124234"}'
+@FlockDev.app.route('/login/', methods=['POST'])
 def login():
   """Login Page."""
-  email = flask.request.form['email']
-  unHashedPass = flask.request.form['password']
+
   
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
 
-
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
+  email = info["email"]
+  unHashedPass = info["pword"]
   #get password from database corresponding to username
   returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
 
   context = {}
 
   # Redirect to create new account if user doesn't exist, this shit doesnt work rn
-  if returnedPassword.fetchone() is None:
-    return flask.redirect(flask.url_for('newUser', userInfo=userInfo))
+  returnPassword = returnedPassword.fetchone()
+  
 
-  returnedPassword = cursor.fetchone()['pword']
   
   # return username if the login is successful
-  if(FlockDev.model.passwords_match(unHashedPass, returnedPassword)):
+  if(FlockDev.model.passwords_match(unHashedPass, returnPassword['pword'])):
     context['email'] = email
     return flask.jsonify(**context)
   else:
-    return flask.jsonify(**makeContext("Error: email or password is incorrect", 404))
+    context['email'] = ""
+    return flask.jsonify(**context)
 
 
 # curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/user/create 
@@ -47,10 +51,11 @@ def newUser():
   cursor = database.cursor()
 
   print("making new user")
-
+  print("JSON OBJECT: ")
+  
   info = flask.request.get_data().decode('utf-8')
   info = json.loads(info)
-
+  print(info)
   # userInfo = flask.request.args['userInfo']
   # email = userInfo['email']
   # fullname = userInfo['fullname']
@@ -59,9 +64,15 @@ def newUser():
   
   hashPass = FlockDev.model.pass_hash(str(info['pword']))
 
-  loginQuery = "INSERT INTO users VALUES (?, ?, ?, ?, NULL, NULL);"
-  cursor.execute(loginQuery, (info['fullname'], info['email'], hashPass, info['phone']))
-
+  fullname = info['firstName'] + " " + info['lastName']
+  if(cursor.execute("SELECT * FROM users WHERE email == ?", (info['email'], )).fetchone() is not None):
+    context = {}
+    context["status"] = "false"
+    return flask.jsonify(**context)
+  
+  loginQuery = "INSERT INTO users (fullname, email, pword, phone, picture, tagID) VALUES (?, ?, ?, ?, NULL, NULL);"
+  cursor.execute(loginQuery, (fullname, info['email'], hashPass, info['phone']))
+  database.commit()
   return flask.jsonify(**makeContext("New Account Created", 200))
   
   

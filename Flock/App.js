@@ -31,15 +31,36 @@ class NativeLoginScreen extends React.Component{
       firstName: yup.string().required().label("Name"),
       lastName: yup.string().required().label("Last Name"),
       email: yup.string().required().email().label("Email"),
-      password: yup.string().required().min(2, 'Password too short, try again').max(20, 'Too long idiot')
+      pword: yup.string().required().label("Password").min(2, 'Password too short, try again').max(20, 'Too long idiot'),
+      phone: yup.number().required().label("Phone Number")
     })
     return(
       <View>
         <ScrollView>
         <Formik
-          initialValues={{firstName :'', lastName: '', email: '', password: ''}}
+          initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
-            alert(JSON.stringify(values))
+            //alert(JSON.stringify(values))
+            fetch('http://35.0.28.21:8000/user/create/', {
+              method: 'POST',
+              body: JSON.stringify({
+                firstName: values['firstName'],
+                lastName: values['lastName'],
+                email: values['email'],
+                pword: values['pword'],
+                phone: values['phone']
+              }),
+            }).then((response) => response.json())
+            .then((responseJson) => {
+              if(responseJson['status'] == "false"){
+                alert("A user already exists with the email " + values['email'] + ". Please try again with another email.")
+              }
+              //alert("hello")
+              //alert(responeJson.code)
+            })
+            .catch((error) =>{
+              alert(error)
+            });
           }}
           validationSchema = {validationScheme}
         >
@@ -80,10 +101,20 @@ class NativeLoginScreen extends React.Component{
                 <Text>Password</Text>
                 <TextInput placeholder ="password" 
                   style={{borderWidth: 1, borderColor: 'black', padding: 10}}
-                  onChangeText={formikProps.handleChange("password")}
+                  onChangeText={formikProps.handleChange("pword")}
                   secureTextEntry
                 />
-                <Text style = {{color: 'red'}}>{formikProps.errors.password}</Text>
+                <Text style = {{color: 'red'}}>{formikProps.errors.pword}</Text>
+              </View>
+
+              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                <Text>Phone Number</Text>
+                <TextInput placeholder ="123-456-7890" 
+                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                  onChangeText={formikProps.handleChange("phone")}
+                  
+                />
+                <Text style = {{color: 'red'}}>{formikProps.errors.phone}</Text>
               </View>
 
               <TouchableOpacity 
@@ -210,42 +241,91 @@ class HomeScreen extends React.Component {
     }
   }
   onAppLogin(){
-    this.props.navigation.navigate('NativeAppLogin')
+    
   }
   render() {
+    const validationScheme = yup.object().shape({
+      email: yup.string().required().email().label("Email"),
+      pword: yup.string().required().label("Password").min(2, 'Password too short, try again').max(20, 'Too long idiot')
+    })
     return (
       <View styles = {styles.body}>
-        
-        <View style = {{marginTop: 20, justifyContent: 'center',alignItems: 'center'}}>
-          <Image style={{width: 200, height: 200}} source={require('./loginPage.png')}  />
-        </View>
-        <View style = {{marginTop: 20}}>
-          <Text style = {{textAlign: 'center'}}>Find Activities. Make Friends </Text>
-        </View>
+        <ScrollView>
+          <View style = {{marginTop: 20, justifyContent: 'center',alignItems: 'center'}}>
+            <Image style={{width: 200, height: 200}} source={require('./loginPage.png')}  />
+          </View>
+          <View style = {{marginTop: 20}}>
+            <Text style = {{textAlign: 'center'}}>Find Activities. Make Friends </Text>
+          </View>
 
-        <View style ={{marginTop: 20, marginHorizontal: 90}}>
-          <TouchableOpacity onPress = {this.onAppLogin}>
-                <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                                justifyContent: 'center', padding: 10}}
-                       >
-                    <Text style = {{color: 'white'}}>Login with Flock</Text>
+          <Formik
+          initialValues={{email :'', pword: ''}}
+          onSubmit={(values) => {
+            fetch('http://35.0.28.21:8000/login/', {
+                method: 'POST',
+                body: JSON.stringify({
+                  email: values['email'],
+                  pword: values['pword'],
+                }),
+              }).then((response) => response.json())
+              .then((responseJson) => {
+                if(responseJson['email'] == ""){
+                  alert("Email/Password combination not found in our database. Please try again.")
+                }
+              })
+              .catch((error) =>{
+                alert(error)
+              });
+            }}
+            validationSchema = {validationScheme}
+          >
+            {formikProps =>(
+              <React.Fragment>
+                <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                  
+                  <Text>Email</Text>
+                  <TextInput placeholder ="janedoe@gmail.com" 
+                    style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                    onChangeText={formikProps.handleChange("email")}
+                  />
+                  <Text style = {{color: 'red'}}>{formikProps.errors.firstName}</Text>
+                  <Text>Password</Text>
+                  <TextInput placeholder ="password" 
+                    style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                    onChangeText={formikProps.handleChange("pword")}
+                    secureTextEntry
+                  />
+                  <Text style = {{color: 'red'}}>{formikProps.errors.firstName}</Text>
                 </View>
-          </TouchableOpacity>
+              
+            
           
-        </View>
+            <View style ={{marginHorizontal: 90}}>
+              <TouchableOpacity onPress ={formikProps.handleSubmit}>
+                    <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
+                                    justifyContent: 'center', padding: 10}}
+                          >
+                        <Text style = {{color: 'white'}}>Login with Flock</Text>
+                    </View>
+              </TouchableOpacity>
+              
+            </View>
+            </React.Fragment>
+            )}
+          </Formik>
 
-        <View style ={{marginTop: 20}}>
-          <Text style ={{textAlign: 'center', color: 'blue'}}>New to Flock? Click to Get Started</Text>
-        </View>
-        <View style = {{justifyContent: 'flex-end'}}>
-        
-         
-          {/* <Button onPress={this.onPressHandler}
-          title="Find Friends" />
-          {/* <FBLoginButton /> */}
-        </View>
+          <View style ={{marginTop: 20}}>
+            <Text style ={{textAlign: 'center', color: 'blue'}} onPress ={() =>{this.props.navigation.navigate('NativeAppLogin')}}>New to Flock? Click to Get Started</Text>
+          </View>
+          <View style = {{justifyContent: 'flex-end'}}>
+          
+          
+            {/* <Button onPress={this.onPressHandler}
+            title="Find Friends" />
+            {/* <FBLoginButton /> */}
+          </View>
 
-        
+        </ScrollView>
 
       
       </View>
@@ -271,7 +351,9 @@ const AppNavigator = createStackNavigator({
   },
   NativeAppLogin:{
     screen: NativeLoginScreen,
-
+    navigationOptions: {
+      header: null,
+    },
   }
   // CreateEvent: EventScreen
   
