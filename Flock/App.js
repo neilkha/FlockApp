@@ -1,17 +1,108 @@
 import React from 'react';
-import { AppRegistry, Button, View, Text, Image, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, AppRegistry, Button, FormLabel, FormInput, FormValidationMessage, View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import t from 'tcomb-form-native';
+import { Formik } from 'formik';
 import {styles} from './styles.js';
-import { LoginButton, LoginManager,
-  AccessToken,
-  GraphRequest,
-  GraphRequestManager } from 'react-native-fbsdk';
+import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
 // import {SwipeScreen} from './screens/SwipeScreen'
 
-var FBLoginButton = require('./FBLoginButton');
+//var FBLoginButton = require('./FBLoginButton');
+
+class NativeLoginScreen extends React.Component{
+  
+  constructor(props) {
+		super(props);
+		this.state = {
+			form: {
+				firstName: null,
+				email: null
+			},
+			isValid: false
+		};
+		this.onChange = this.onChange.bind(this)
+  }
+  onChange({updateData}){
+		this.setState({ form: updateData })
+	}
+  render(){
+    const validationScheme = yup.object().shape({
+      firstName: yup.string().required().label("Name"),
+      lastName: yup.string().required().label("Last Name"),
+      email: yup.string().required().email().label("Email"),
+      password: yup.string().required().min(2, 'Password too short, try again').max(20, 'Too long idiot')
+    })
+    return(
+      <View>
+        <ScrollView>
+        <Formik
+          initialValues={{firstName :'', lastName: '', email: '', password: ''}}
+          onSubmit={(values) =>{
+            alert(JSON.stringify(values))
+          }}
+          validationSchema = {validationScheme}
+        >
+          {formikProps =>(
+            <React.Fragment>
+              <View style ={{padding: 20, backgroundColor: '#ff6969', alignItems: 'center'}}>
+                <Text>Take Your First Step In Finding Events</Text>
+              </View>
+              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                
+                <Text>First Name</Text>
+                <TextInput placeholder ="Jane" 
+                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                  onChangeText={formikProps.handleChange("firstName")}
+                />
+                <Text style = {{color: 'red'}}>{formikProps.errors.firstName}</Text>
+              </View>
+
+              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                
+                <Text>Last Name</Text>
+                <TextInput placeholder ="Doe" 
+                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                  onChangeText={formikProps.handleChange("lastName")}
+                />
+                <Text style = {{color: 'red'}}>{formikProps.errors.lastName}</Text>
+              </View>
+
+              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                <Text>Email</Text>
+                <TextInput placeholder ="janedoe@gmail.com" 
+                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                  onChangeText={formikProps.handleChange("email")}
+                />
+                <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
+              </View>
+              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                <Text>Password</Text>
+                <TextInput placeholder ="password" 
+                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                  onChangeText={formikProps.handleChange("password")}
+                  secureTextEntry
+                />
+                <Text style = {{color: 'red'}}>{formikProps.errors.password}</Text>
+              </View>
+
+              <TouchableOpacity 
+                  style = {{marginVertical: 20, marginHorizontal: 20}}
+                  onPress ={formikProps.handleSubmit}>
+                  <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
+                                  justifyContent: 'center', padding: 10}}
+                        >
+                      <Text style = {{color: 'white'}}>Submit</Text>
+                  </View>
+              </TouchableOpacity>
+            </React.Fragment>
+          )}
+        </Formik>
+        </ScrollView>
+      </View>
+    )
+  }
+}
 class SwipeScreen extends React.Component {
   constructor(props){
     super(props);
@@ -53,6 +144,7 @@ class HomeScreen extends React.Component {
     this.FBLoginCallback = this.FBLoginCallback.bind(this);
     this.onPressHandler = this.onPressHandler.bind(this);
     this.onFacebookLoginFinished = this.onFacebookLoginFinished.bind(this);
+    this.onAppLogin = this.onAppLogin.bind(this);
     this.state = {name: "", email: "", loading : false};
 
   }
@@ -98,35 +190,7 @@ class HomeScreen extends React.Component {
       this.props.navigation.navigate('UserEvents', {name:this.state.name, email: this.state.email});
     }
   }
-  // async facebookLogin() {
-  //   // native_only config will fail in the case that the user has
-  //   // not installed in his device the Facebook app. In this case we
-  //   // need to go for webview.
-  //   let result;
-  //   try {
-  //     LoginManager.setLoginBehavior('WEB_ONLY');
-  //     alert("trying await")
-  //     LoginManager.logInWithPermissions(['public_profile, email'])
-  //     .then((result) =>{
-  //       if(result.isCancelled){
-  //         alert("Result returned cancelled");
-  //       }
-  //     });
-  //   } catch (webError) {
-  //     // show error message to the user if none of the FB screens
-  //     // did not open
-  //   }
-  //   console.log(result);
-  //   // handle the case that users clicks cancel button in Login view
-  //   if (result.isCancelled) {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //   } else {
-  //     // Create a graph request asking for user information
-  //     await this.FBGraphRequest('email', this.FBLoginCallback);
-  //   }
-  // }
+
   onPressHandler(){
     
     this.facebookLogin().then(() => {alert("name is " + this.state.name); this.props.navigation.navigate('UserEvents', {name: this.state.name }) })
@@ -145,24 +209,36 @@ class HomeScreen extends React.Component {
       
     }
   }
+  onAppLogin(){
+    this.props.navigation.navigate('NativeAppLogin')
+  }
   render() {
     return (
       <View styles = {styles.body}>
-        <View style = {{justifyContent: 'center',alignItems: 'center',}}>
+        
+        <View style = {{marginTop: 20, justifyContent: 'center',alignItems: 'center'}}>
           <Image style={{width: 200, height: 200}} source={require('./loginPage.png')}  />
-        
-        
-          
-          
         </View>
-        <View>
+        <View style = {{marginTop: 20}}>
           <Text style = {{textAlign: 'center'}}>Find Activities. Make Friends </Text>
         </View>
+
+        <View style ={{marginTop: 20, marginHorizontal: 90}}>
+          <TouchableOpacity onPress = {this.onAppLogin}>
+                <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
+                                justifyContent: 'center', padding: 10}}
+                       >
+                    <Text style = {{color: 'white'}}>Login with Flock</Text>
+                </View>
+          </TouchableOpacity>
+          
+        </View>
+
+        <View style ={{marginTop: 20}}>
+          <Text style ={{textAlign: 'center', color: 'blue'}}>New to Flock? Click to Get Started</Text>
+        </View>
         <View style = {{justifyContent: 'flex-end'}}>
-        <LoginButton
-            permissions={["public_profile", "email"]}
-            onLoginFinished={(error, result) => this.onFacebookLoginFinished(error,result)}
-            onLogoutFinished={() => alert("User logged out")}/> 
+        
          
           {/* <Button onPress={this.onPressHandler}
           title="Find Friends" />
@@ -192,6 +268,10 @@ const AppNavigator = createStackNavigator({
     navigationOptions: {
       header: null,
     },
+  },
+  NativeAppLogin:{
+    screen: NativeLoginScreen,
+
   }
   // CreateEvent: EventScreen
   
