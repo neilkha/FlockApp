@@ -25,10 +25,15 @@ def login():
   #get password from database corresponding to username
   returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
 
+
   context = {}
 
   # Redirect to create new account if user doesn't exist, this shit doesnt work rn
   returnPassword = returnedPassword.fetchone()
+
+  if(returnPassword is None):
+    context['email'] = ""
+    return flask.jsonify(**context)
   
 
   

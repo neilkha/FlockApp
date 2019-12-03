@@ -41,7 +41,7 @@ class NativeLoginScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://35.0.28.21:8000/user/create/', {
+            fetch('http://10.0.0.25:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -261,7 +261,8 @@ class HomeScreen extends React.Component {
           <Formik
           initialValues={{email :'', pword: ''}}
           onSubmit={(values) => {
-            fetch('http://35.0.28.21:8000/login/', {
+            
+            fetch('http://10.0.0.25:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -288,14 +289,14 @@ class HomeScreen extends React.Component {
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("email")}
                   />
-                  <Text style = {{color: 'red'}}>{formikProps.errors.firstName}</Text>
+                  <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
                   <Text>Password</Text>
                   <TextInput placeholder ="password" 
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("pword")}
                     secureTextEntry
                   />
-                  <Text style = {{color: 'red'}}>{formikProps.errors.firstName}</Text>
+                  <Text style = {{color: 'red'}}>{formikProps.errors.pword}</Text>
                 </View>
               
             
