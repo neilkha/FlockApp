@@ -6,10 +6,42 @@ import { Formik } from 'formik';
 import {styles} from './styles.js';
 import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
+// import Swipe from './swipe';
 // import {SwipeScreen} from './screens/SwipeScreen'
 
 //var FBLoginButton = require('./FBLoginButton');
+class Event extends React.Component{
+  render(){
+    let email = this.props.navigation.getParam('email', 'default value')
+    let splitEmail = email.split('@')
+    fetch('http://35.3.118.132:8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
+    .then((response) => response.json())
+    .then((responseJson) => {
+      if(responseJson.length == 0){
+        alert("There are no events to show")
+      }
+      else{
+        for (var key in responseJson) {
+          // check if the property/key is defined in the object itself, not in parent
+          let eventID = responseJson[key]['eventID'];
+          let eventName = responseJson[key]['eventName'];
+          let eventDescription = responseJson[key]['eventDescription'];
+          let picture = responseJson[key]['picture'];
+        }
+    }
 
+    })
+    .then(() => {alert('Rastogi is an idiot')})
+    .catch((error) =>{
+      alert(error)
+    });
+    return(
+      <View>
+        <Text>HOLA</Text>
+      </View>
+    )
+  }
+}
 class NativeLoginScreen extends React.Component{
   
   constructor(props) {
@@ -41,7 +73,7 @@ class NativeLoginScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://10.0.0.25:8000/user/create/', {
+            fetch('http://35.3.118.132:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -249,10 +281,10 @@ class HomeScreen extends React.Component {
       pword: yup.string().required().label("Password").min(2, 'Password too short, try again').max(20, 'Too long idiot')
     })
     return (
-      <View styles = {styles.body}>
+      <View style = {{flex: 1, backgroundColor: '#ff6969'}}>
         <ScrollView>
           <View style = {{marginTop: 20, justifyContent: 'center',alignItems: 'center'}}>
-            <Image style={{width: 200, height: 200}} source={require('./loginPage.png')}  />
+            <Text style ={{fontFamily: 'sans-serif-light', fontSize: 60, color: 'white', marginTop: 20 }}>FLOCK</Text>
           </View>
           <View style = {{marginTop: 20}}>
             <Text style = {{textAlign: 'center'}}>Find Activities. Make Friends </Text>
@@ -262,7 +294,7 @@ class HomeScreen extends React.Component {
           initialValues={{email :'', pword: ''}}
           onSubmit={(values) => {
             
-            fetch('http://10.0.0.25:8000/login/', {
+            fetch('http://35.3.118.132:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -273,11 +305,18 @@ class HomeScreen extends React.Component {
                 if(responseJson['email'] == ""){
                   alert("Email/Password combination not found in our database. Please try again.")
                 }
+                else{
+                  this.props.navigation.navigate('EventScreen', {email: values.email})
+                }
               })
               .catch((error) =>{
                 alert(error)
               });
+              
+            
+
             }}
+          
             validationSchema = {validationScheme}
           >
             {formikProps =>(
@@ -303,10 +342,10 @@ class HomeScreen extends React.Component {
           
             <View style ={{marginHorizontal: 90}}>
               <TouchableOpacity onPress ={formikProps.handleSubmit}>
-                    <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
+                    <View style = {{backgroundColor: 'white', alignItems: 'center', 
                                     justifyContent: 'center', padding: 10}}
                           >
-                        <Text style = {{color: 'white'}}>Login with Flock</Text>
+                        <Text style = {{color: '#ff6969'}}>Login with Flock</Text>
                     </View>
               </TouchableOpacity>
               
@@ -355,6 +394,12 @@ const AppNavigator = createStackNavigator({
     navigationOptions: {
       header: null,
     },
+  },
+  EventScreen:{
+    screen: Event,
+    navigationOptions:{
+      header: null
+    }
   }
   // CreateEvent: EventScreen
   
