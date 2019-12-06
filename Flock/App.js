@@ -11,7 +11,9 @@ import { Formik } from 'formik';
 import {styles} from './styles.js';
 import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
+
 //import Swipe from './swipe';
+
 // import {SwipeScreen} from './screens/SwipeScreen'
 
 //var FBLoginButton = require('./FBLoginButton');
