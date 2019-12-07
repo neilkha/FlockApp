@@ -1,28 +1,31 @@
 import React from 'react';
 import { ActivityIndicator, AppRegistry, Button, FormLabel, FormInput, FormValidationMessage, View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
-import {
-  createAppContainer,
-  DrawerIterms,
-  SafeAreaView
-} from 'react-navigation';
-import {createDrawerNavigator} from 'react-navigation-drawer';
 import { createStackNavigator } from 'react-navigation-stack';
 import { Formik } from 'formik';
 import {styles} from './styles.js';
 import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
-
-//import Swipe from './swipe';
-
+import {Header, Icon, Container, Left, Content} from 'native-base'
+import SettingsScreen from './screens/SettingsScreen';
+import CreateEvent from './screens/CreateEvent';
+import DrawerNavigator from './navigation/DrawerNavigator';
+import {
+  createAppContainer,
+  DrawerIterms,
+  SafeAreaView
+} from 'react-navigation';
+import MenuButton from './components/MenuButton';
 // import {SwipeScreen} from './screens/SwipeScreen'
 
 //var FBLoginButton = require('./FBLoginButton');
+
+
 
 class Event extends React.Component{
   render(){
     let email = this.props.navigation.getParam('email', 'default value')
     let splitEmail = email.split('@')
-    fetch('http://35.0.61.128:8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
+    fetch('http://35.1.202.187:8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
     .then((response) => response.json())
     .then((responseJson) => {
       if(responseJson.length == 0){
@@ -39,37 +42,22 @@ class Event extends React.Component{
     }
 
     })
-    .then(() => {alert('Rastogi is an idiot')})
+    .then(() => {})
     .catch((error) =>{
       alert(error)
     });
     return(
       <View>
-        <Apps />
-        <Text>HOLA</Text>
+         <MenuButton />
+        
+        <DrawerNavigator />
       </View>
+        
     )
   }
 }
-class CreateEvent extends React.Component{
 
-}
 
-const CustomDrawerComponent = (props) =>(
-  <SafeAreaView>
-    <ScrollView>
-      <DrawerItems {...props} />
-    </ScrollView>
-  </SafeAreaView>
-);
-
-const AppDrawerNavigator = createDrawerNavigator(
-  {
-    Home: Event
-  },
-  {contentComponent: CustomDrawerComponent}
-);
-const Apps = createAppContainer(AppDrawerNavigator)
 class NativeLoginScreen extends React.Component{
   
   constructor(props) {
@@ -101,7 +89,7 @@ class NativeLoginScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://35.0.61.128:8000/user/create/', {
+            fetch('http://35.1.202.187:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -213,7 +201,7 @@ class SwipeScreen extends React.Component {
     
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
-    fetch('https://35.0.61.128:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://35.1.202.187:8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -322,7 +310,7 @@ class HomeScreen extends React.Component {
           initialValues={{email :'', pword: ''}}
           onSubmit={(values) => {
             
-            fetch('http://35.0.61.128:8000/login/', {
+            fetch('http://35.1.202.187:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
