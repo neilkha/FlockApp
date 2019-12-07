@@ -247,6 +247,7 @@ def updateUser(beginEmail, endEmail):
   if emailQuery is None:
     return flask.jsonify(**makeContext("Email does not exist", 400))
     
+    
   fullname = flask.request.form['fullname']
   phone = flask.request.form['phone']
   picture = flask.request.form['picture']

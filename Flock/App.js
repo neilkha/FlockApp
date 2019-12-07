@@ -1,76 +1,55 @@
 import React from 'react';
-import { ActivityIndicator, AppRegistry, Button, FormLabel, FormInput, FormValidationMessage, View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
-import {
-  createAppContainer,
-  DrawerIterms,
-  SafeAreaView
-} from 'react-navigation';
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import { ActivityIndicator, Dimensions, AppRegistry, Button, FormLabel, FormInput, FormValidationMessage, View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { Formik } from 'formik';
 import {styles} from './styles.js';
 import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
+import {Header, Icon, Container, Left, Content} from 'native-base'
+import SettingsScreen from './screens/SettingsScreen';
+import CreateEvent from './screens/CreateEvent';
+import Event from './screens/Event';
+import {createDrawerNavigator} from 'react-navigation-drawer';
 
-//import Swipe from './swipe';
 
+import 'react-native-gesture-handler'
+import {
+  createSwitchNavigator,
+  createAppContainer,
+  DrawerIterms,
+  SafeAreaView
+} from 'react-navigation';
+import {createBottomTabNavigator} from 'react-navigation-tabs';
+import MenuButton from './components/MenuButton';
 // import {SwipeScreen} from './screens/SwipeScreen'
 
 //var FBLoginButton = require('./FBLoginButton');
 
-class Event extends React.Component{
-  render(){
-    let email = this.props.navigation.getParam('email', 'default value')
-    let splitEmail = email.split('@')
-    fetch('http://35.0.61.128:8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
-    .then((response) => response.json())
-    .then((responseJson) => {
-      if(responseJson.length == 0){
-        alert("There are no events to show")
-      }
-      else{
-        for (var key in responseJson) {
-          // check if the property/key is defined in the object itself, not in parent
-          let eventID = responseJson[key]['eventID'];
-          let eventName = responseJson[key]['eventName'];
-          let eventDescription = responseJson[key]['eventDescription'];
-          let picture = responseJson[key]['picture'];
-        }
-    }
 
-    })
-    .then(() => {alert('Rastogi is an idiot')})
-    .catch((error) =>{
-      alert(error)
-    });
-    return(
-      <View>
-        <Apps />
-        <Text>HOLA</Text>
+
+const WIDTH = Dimensions.get('window').width;
+
+const DrawerConfig = {
+    drawerWidth: WIDTH*0.83,
+    // contentComponent: ({ navigation }) => {
+		// return(<MenuDrawer navigation={navigation} />)
+	
+}
+
+  
+
+
+// const MyApp = createAppContainer(DrawerNavigator);
+class Feed extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Feed</Text>
       </View>
-    )
+    );
   }
 }
-class CreateEvent extends React.Component{
-
-}
-
-const CustomDrawerComponent = (props) =>(
-  <SafeAreaView>
-    <ScrollView>
-      <DrawerItems {...props} />
-    </ScrollView>
-  </SafeAreaView>
-);
-
-const AppDrawerNavigator = createDrawerNavigator(
-  {
-    Home: Event
-  },
-  {contentComponent: CustomDrawerComponent}
-);
-const Apps = createAppContainer(AppDrawerNavigator)
-class NativeLoginScreen extends React.Component{
+class NewUserScreen extends React.Component{
   
   constructor(props) {
 		super(props);
@@ -101,7 +80,7 @@ class NativeLoginScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://35.0.61.128:8000/user/create/', {
+            fetch('http://35.0.37.87:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -213,7 +192,7 @@ class SwipeScreen extends React.Component {
     
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
-    fetch('https://35.0.61.128:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://35.0.37.87:8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -228,7 +207,7 @@ class SwipeScreen extends React.Component {
   }
 }
 
-class HomeScreen extends React.Component {
+class LoginScreen extends React.Component {
   constructor(props){
     super(props);
     this.FBGraphRequest = this.FBGraphRequest.bind(this);
@@ -322,7 +301,7 @@ class HomeScreen extends React.Component {
           initialValues={{email :'', pword: ''}}
           onSubmit={(values) => {
             
-            fetch('http://35.0.61.128:8000/login/', {
+            fetch('http://35.0.37.87:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -383,7 +362,7 @@ class HomeScreen extends React.Component {
           </Formik>
 
           <View style ={{marginTop: 20}}>
-            <Text style ={{textAlign: 'center', color: 'blue'}} onPress ={() =>{this.props.navigation.navigate('NativeAppLogin')}}>New to Flock? Click to Get Started</Text>
+            <Text style ={{textAlign: 'center', color: 'blue'}} onPress ={() =>{this.props.navigation.navigate('CreateNewUser')}}>New to Flock? Click to Get Started</Text>
           </View>
           <View style = {{justifyContent: 'flex-end'}}>
           
@@ -402,29 +381,37 @@ class HomeScreen extends React.Component {
   }
 }
 
+const DashboardTabNavigator = createBottomTabNavigator(
+  {
+    Feed,
+  }
+)
+const DrawerNavigator = createDrawerNavigator(
+  {
+      Home: {screen: Event,},
+      Settings: {screen: SettingsScreen},
+      CreateEvent: {screen: CreateEvent}
+  },
+  DrawerConfig
+);
 
 const AppNavigator = createStackNavigator({
+  // login screen
   Home: {
-    screen: HomeScreen,
+    screen: LoginScreen,
     navigationOptions: {
       header: null,
     },
   },
-  
-  UserEvents: {
-    screen: SwipeScreen,
+  CreateNewUser:{
+    screen: NewUserScreen,
     navigationOptions: {
       header: null,
     },
   },
-  NativeAppLogin:{
-    screen: NativeLoginScreen,
-    navigationOptions: {
-      header: null,
-    },
-  },
+  // home screen in app
   EventScreen:{
-    screen: Event,
+    screen: DrawerNavigator,
     navigationOptions:{
       header: null
     }
