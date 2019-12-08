@@ -7,6 +7,7 @@ import {
   } from 'react-navigation';
 
 import {createDrawerNavigator} from 'react-navigation-drawer';
+import Event from '../screens/Event';
 import CreateEvent from '../screens/CreateEvent';
 import SettingsScreen from '../screens/SettingsScreen';
 
@@ -16,29 +17,19 @@ const WIDTH = Dimensions.get('window').width;
 
 const DrawerConfig = {
     drawerWidth: WIDTH*0.83,
-  //   drawerPosition: 'left',
-  //   contentComponent: ({ navigation }) => {
-	// 	return(<MenuDrawer navigation={navigation} />)
-	// }
+    contentComponent: ({ navigation }) => {
+		return(<MenuDrawer navigation={navigation} />)
+	}
 }
 
   
 const DrawerNavigator = createDrawerNavigator(
     {
     
-        Home: {screen: CreateEvent},
+        Home: {screen: Event},
         Settings: {screen: SettingsScreen}
     },
     DrawerConfig
-    // {
-    //   hideStatusBar: true,
-    //   drawerBackgroundColor: 'rgba(255,255,255,.9)',
-    //   overlayColor: '#6b52ae',
-    //   contentOptions: {
-    //     activeTintColor: '#fff',
-    //     activeBackgroundColor: '#6b52ae',
-    //   },
-    // }
 );
 
 export default createAppContainer(DrawerNavigator);

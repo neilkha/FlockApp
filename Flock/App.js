@@ -30,7 +30,7 @@ import MenuButton from './components/MenuButton';
 const WIDTH = Dimensions.get('window').width;
 
 const DrawerConfig = {
-    drawerWidth: WIDTH*0.83,
+    drawerWidth: WIDTH*0.5,
     // contentComponent: ({ navigation }) => {
 		// return(<MenuDrawer navigation={navigation} />)
 	
@@ -80,7 +80,7 @@ class NewUserScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://35.0.37.87:8000/user/create/', {
+            fetch('http://10.0.0.25:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -106,7 +106,7 @@ class NewUserScreen extends React.Component{
           {formikProps =>(
             <React.Fragment>
               <View style ={{padding: 20, backgroundColor: '#ff6969', alignItems: 'center'}}>
-                <Text>Take Your First Step In Finding Events</Text>
+                <Text style={{color: 'white', fontFamily: 'sans-serif-light', fontSize: 20}}>Become Apart of the Flock Community</Text>
               </View>
               <View style ={{marginVertical: 10, marginHorizontal: 20}}>
                 
@@ -192,7 +192,7 @@ class SwipeScreen extends React.Component {
     
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
-    fetch('https://35.0.37.87:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://10.0.0.25:8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -210,11 +210,6 @@ class SwipeScreen extends React.Component {
 class LoginScreen extends React.Component {
   constructor(props){
     super(props);
-    this.FBGraphRequest = this.FBGraphRequest.bind(this);
-    this.FBLoginCallback = this.FBLoginCallback.bind(this);
-    this.onPressHandler = this.onPressHandler.bind(this);
-    this.onFacebookLoginFinished = this.onFacebookLoginFinished.bind(this);
-    this.onAppLogin = this.onAppLogin.bind(this);
     this.state = {name: "", email: "", loading : false};
 
   }
@@ -294,14 +289,14 @@ class LoginScreen extends React.Component {
             <Text style ={{fontFamily: 'sans-serif-light', fontSize: 60, color: 'white', marginTop: 20 }}>FLOCK</Text>
           </View>
           <View style = {{marginTop: 20}}>
-            <Text style = {{textAlign: 'center'}}>Find Activities. Make Friends </Text>
+            <Text style = {{fontFamily: 'sans-serif-light', textAlign: 'center'}}>Find Activities. Make Friends </Text>
           </View>
 
           <Formik
           initialValues={{email :'', pword: ''}}
           onSubmit={(values) => {
             
-            fetch('http://35.0.37.87:8000/login/', {
+            fetch('http://10.0.0.25:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -330,13 +325,13 @@ class LoginScreen extends React.Component {
               <React.Fragment>
                 <View style ={{marginVertical: 10, marginHorizontal: 20}}>
                   
-                  <Text>Email</Text>
+                  <Text style = {{fontFamily: 'sans-serif-light'}}>Email</Text>
                   <TextInput placeholder ="janedoe@gmail.com" 
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("email")}
                   />
-                  <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
-                  <Text>Password</Text>
+                  <Text style = {{fontFamily: 'sans-serif-light', color: 'red'}}>{formikProps.errors.email}</Text>
+                  <Text style = {{fontFamily: 'sans-serif-light'}}>Password</Text>
                   <TextInput placeholder ="password" 
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("pword")}
@@ -352,7 +347,7 @@ class LoginScreen extends React.Component {
                     <View style = {{backgroundColor: 'white', alignItems: 'center', 
                                     justifyContent: 'center', padding: 10}}
                           >
-                        <Text style = {{color: '#ff6969'}}>Login with Flock</Text>
+                        <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login with Flock</Text>
                     </View>
               </TouchableOpacity>
               
