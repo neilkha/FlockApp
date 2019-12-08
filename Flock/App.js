@@ -157,13 +157,11 @@ class NewUserScreen extends React.Component{
               </View>
 
               <TouchableOpacity 
-                  style = {{marginVertical: 20, marginHorizontal: 20}}
+                  style = {{marginVertical: 20, marginHorizontal: 50, backgroundColor: '#ff6969', alignItems: 'center', 
+                  justifyContent: 'center', padding: 10, borderRadius: 50}}
                   onPress ={formikProps.handleSubmit}>
-                  <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                                  justifyContent: 'center', padding: 10}}
-                        >
                       <Text style = {{color: 'white'}}>Submit</Text>
-                  </View>
+                  
               </TouchableOpacity>
             </React.Fragment>
           )}
@@ -343,12 +341,9 @@ class LoginScreen extends React.Component {
             
           
             <View style ={{marginHorizontal: 90}}>
-              <TouchableOpacity onPress ={formikProps.handleSubmit}>
-                    <View style = {{backgroundColor: 'white', alignItems: 'center', 
-                                    justifyContent: 'center', padding: 10}}
-                          >
-                        <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login with Flock</Text>
-                    </View>
+              <TouchableOpacity style = {{backgroundColor: 'white', alignItems: 'center', 
+                                    justifyContent: 'center', padding: 10, borderRadius: 50}}onPress ={formikProps.handleSubmit}>
+                 <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login with Flock</Text>
               </TouchableOpacity>
               
             </View>

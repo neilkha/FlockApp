@@ -76,8 +76,8 @@ export default class CreateEvent extends React.Component{
               <View style ={{marginVertical: 10, marginHorizontal: 20}}>
                 
                 <Text>Describe Your Event: </Text>
-                <TextInput placeholder ="Doe" 
-                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
+                <TextInput 
+                  style={{borderWidth: 1, borderColor: 'black', paddingBottom: 30}}
                   onChangeText={formikProps.handleChange("lastName")}
                 />
                 <Text style = {{color: 'red'}}>{formikProps.errors.eventDesc}</Text>
@@ -185,12 +185,11 @@ export default class CreateEvent extends React.Component{
                 />
               </View>
               <TouchableOpacity 
-                  style = {{marginVertical: 20, marginHorizontal: 20}}>
-                  <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                                  justifyContent: 'center', padding: 10}}
-                        >
+                  style = {{backgroundColor: '#ff6969', alignItems: 'center', 
+                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}>
+                 
                       <Text style = {{color: 'white'}}>Submit</Text>
-                  </View>
+                  
               </TouchableOpacity>
             </React.Fragment>
           )}
