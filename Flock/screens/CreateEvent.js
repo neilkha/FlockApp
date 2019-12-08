@@ -17,7 +17,7 @@ export default class CreateEvent extends React.Component{
 
   render() {
     return (
-      <View style ={{flex: 1}}>
+      <View style ={{}}>
         <ScrollView>
         <Icon
           name="md-menu"
@@ -26,7 +26,9 @@ export default class CreateEvent extends React.Component{
           style={styles.menuIcon}
           onPress={() => this.props.navigation.toggleDrawer()}
         />
-        
+        <View style = {styles.header}>
+          <Text style = {{textAlign: 'center',fontSize: 20}}>Create an Event!</Text>
+        </View>
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
@@ -61,7 +63,7 @@ export default class CreateEvent extends React.Component{
         >
           {formikProps =>(
             <React.Fragment>
-              <View style ={{marginTop: 50, marginHorizontal: 20}}>
+              <View style ={{marginTop: 20, marginHorizontal: 20}}>
                 
                 <Text>Event Name</Text>
                 <TextInput placeholder ="Jane" 
@@ -89,97 +91,99 @@ export default class CreateEvent extends React.Component{
                 />
                 <Text style = {{color: 'red'}}>{formikProps.errors.phone}</Text>
               </View>
-              <Text>Tags:</Text>
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Outdoor Adventures'
-                checked={formikProps.values.outdoor_adventures}
-                onPress={() => {formikProps.setFieldValue('outdoor_adventures', !formikProps.values.outdoor_adventures)}}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Cooking'
-                checked={formikProps.values.cooking}
-                onPress={() => formikProps.setFieldValue('cooking', !formikProps.values.cooking)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Gaming'
-                checked={formikProps.values.gaming}
-                onPress={() => formikProps.setFieldValue('gaming', !formikProps.values.gaming)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Night Life'
-                checked={formikProps.values.night_life}
-                onPress={() => formikProps.setFieldValue('night_life', !formikProps.values.night_life)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Swimming'
-                checked={formikProps.values.swimming}
-                onPress={() => formikProps.setFieldValue('swimming', !formikProps.values.swimming)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Weight Lifting'
-                checked={formikProps.values.weight_lifting}
-                onPress={() => formikProps.setFieldValue('weight_lifting', !formikProps.values.weight_lifting)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Photography'
-                checked={formikProps.values.photography}
-                onPress={() => formikProps.setFieldValue('photography', !formikProps.values.photography)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Basketball'
-                checked={formikProps.values.basketball}
-                onPress={() => formikProps.setFieldValue('basketball', !formikProps.values.basketball)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Yoga'
-                checked={formikProps.values.yoga}
-                onPress={() => formikProps.setFieldValue('yoga', !formikProps.values.yoga)}
-              />
-              <CheckBox
-                containerStyle={styles.checkBoxContainer}
-                checkedIcon='check-box'
-                iconType='material'
-                uncheckedIcon='check-box-outline-blank'
-                title='Dancing'
-                checked={formikProps.values.dancing}
-                onPress={() => formikProps.setFieldValue('dancing', !formikProps.values.dancing)}
-              />
+              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
+                <Text>Tags:</Text>
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Outdoor Adventures'
+                  checked={formikProps.values.outdoor_adventures}
+                  onPress={() => {formikProps.setFieldValue('outdoor_adventures', !formikProps.values.outdoor_adventures)}}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Cooking'
+                  checked={formikProps.values.cooking}
+                  onPress={() => formikProps.setFieldValue('cooking', !formikProps.values.cooking)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Gaming'
+                  checked={formikProps.values.gaming}
+                  onPress={() => formikProps.setFieldValue('gaming', !formikProps.values.gaming)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Night Life'
+                  checked={formikProps.values.night_life}
+                  onPress={() => formikProps.setFieldValue('night_life', !formikProps.values.night_life)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Swimming'
+                  checked={formikProps.values.swimming}
+                  onPress={() => formikProps.setFieldValue('swimming', !formikProps.values.swimming)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Weight Lifting'
+                  checked={formikProps.values.weight_lifting}
+                  onPress={() => formikProps.setFieldValue('weight_lifting', !formikProps.values.weight_lifting)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Photography'
+                  checked={formikProps.values.photography}
+                  onPress={() => formikProps.setFieldValue('photography', !formikProps.values.photography)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Basketball'
+                  checked={formikProps.values.basketball}
+                  onPress={() => formikProps.setFieldValue('basketball', !formikProps.values.basketball)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Yoga'
+                  checked={formikProps.values.yoga}
+                  onPress={() => formikProps.setFieldValue('yoga', !formikProps.values.yoga)}
+                />
+                <CheckBox
+                  containerStyle={styles.checkBoxContainer}
+                  checkedIcon='check-box'
+                  iconType='material'
+                  uncheckedIcon='check-box-outline-blank'
+                  title='Dancing'
+                  checked={formikProps.values.dancing}
+                  onPress={() => formikProps.setFieldValue('dancing', !formikProps.values.dancing)}
+                />
+              </View>
               <TouchableOpacity 
                   style = {{marginVertical: 20, marginHorizontal: 20}}>
                   <View style = {{backgroundColor: '#ff6969', alignItems: 'center', 
@@ -204,6 +208,9 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 20,
     left: 20,
-    backgroundColor: '#ff6969'
-	}
+  },
+  header: {
+    paddingTop: 20,
+    paddingBottom: 5
+  }
 })

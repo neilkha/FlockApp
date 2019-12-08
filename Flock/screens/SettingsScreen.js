@@ -7,7 +7,7 @@ export default class SettingsScreen extends React.Component{
     super(props);
   }
   static navigationOptions = {
-    drawerLabel: 'Notifications',
+    drawerLabel: 'Account Settings',
     
   };
 
