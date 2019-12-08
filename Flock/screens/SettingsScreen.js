@@ -14,13 +14,16 @@ export default class SettingsScreen extends React.Component{
   render() {
     return (
       <View style ={{flex: 1, backgroundColor: '#ff6969'}}>
-      <Icon
-				name="md-menu"
-				color="#000000"
-				size={32}
-				style={styles.menuIcon}
-				onPress={() => this.props.navigation.toggleDrawer()}
-			/>
+        <Icon
+          name="md-menu"
+          color="#000000"
+          size={32}
+          style={styles.menuIcon}
+          onPress={() => this.props.navigation.toggleDrawer()}
+        />
+        <View>
+          
+        </View>
       </View>
     );
   }
