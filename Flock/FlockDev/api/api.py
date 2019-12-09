@@ -88,7 +88,7 @@ def newUser():
 
   tagQuery = "INSERT INTO tags VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
   cursor.execute(tagQuery, (tagID,
-                            True,
+                            False,
                             False,
                             False,
                             False,
@@ -144,68 +144,68 @@ def availableEvents(beginEmail, endEmail):
   return flask.jsonify(**eventInfo)
 
 
-@FlockDev.app.route('/events/getStatusEvents/<beginEmail>/<endEmail>/<status>',
-                    methods = ['GET'])
-def getStatusEvents(beginEmail, endEmail, status):
-  """View what events a user is interested in"""
-  # get db
-  database = FlockDev.model.get_db()
-  cursor = database.cursor()
+# @FlockDev.app.route('/events/getStatusEvents/<beginEmail>/<endEmail>/<status>',
+#                     methods = ['GET'])
+# def getStatusEvents(beginEmail, endEmail, status):
+#   """View what events a user is interested in"""
+#   # get db
+#   database = FlockDev.model.get_db()
+#   cursor = database.cursor()
 
-  email = beginEmail + '@' + endEmail
+#   email = beginEmail + '@' + endEmail
 
-  if int(status) < 0 or int(status) > 2:
-    return flask.jsonify(**makeContext("Error: Status does not exist", 404))
+#   if int(status) < 0 or int(status) > 2:
+#     return flask.jsonify(**makeContext("Error: Status does not exist", 404))
     
-  eventQuery = "SELECT DISTINCT UEI.eventID \
-                FROM users U, userEventInfo UEI \
-                WHERE U.email = ? AND U.userID = UEI.userID \
-                AND UEI.commitStatus = ?"
-  context = cursor.execute(eventQuery, (email, status,)).fetchall()
+#   eventQuery = "SELECT DISTINCT UEI.eventID \
+#                 FROM users U, userEventInfo UEI \
+#                 WHERE U.email = ? AND U.userID = UEI.userID \
+#                 AND UEI.commitStatus = ?"
+#   context = cursor.execute(eventQuery, (email, status,)).fetchall()
 
-  eventInfo = {}
-  i = 0
-  for element in context:
-    eventID = element['eventID']
-    query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
-    eventInfo[str(i)] = cursor.execute(query).fetchone()
-    i += 1
+#   eventInfo = {}
+#   i = 0
+#   for element in context:
+#     eventID = element['eventID']
+#     query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
+#     eventInfo[str(i)] = cursor.execute(query).fetchone()
+#     i += 1
   
-  return flask.jsonify(**eventInfo)
+#   return flask.jsonify(**eventInfo)
 
 
-@FlockDev.app.route('/events/postEventStatus/<beginEmail>/<endEmail>/<eventID>/<status>',
-                    methods = ['POST'])
-def postEventStatus(beginEmail, endEmail, eventID, status):
-  """Update the table to reflect a user has seen and is interested."""
-  # get db
-  database = FlockDev.model.get_db()
-  cursor = database.cursor()
+# @FlockDev.app.route('/events/postEventStatus/<beginEmail>/<endEmail>/<eventID>/<status>',
+#                     methods = ['POST'])
+# def postEventStatus(beginEmail, endEmail, eventID, status):
+#   """Update the table to reflect a user has seen and is interested."""
+#   # get db
+#   database = FlockDev.model.get_db()
+#   cursor = database.cursor()
 
-  email = beginEmail + '@' + endEmail
+#   email = beginEmail + '@' + endEmail
 
-  if int(status) < 0 or int(status) > 2:
-    context = {}
-    context['message'] = "Error: status does not exist"
-    context['status_code'] = 404
-    return flask.jsonify(**context)
+#   if int(status) < 0 or int(status) > 2:
+#     context = {}
+#     context['s not exist"
+#     context['status_code'] = 404
+#     return flask.jsonify(**context)
 
-  # grab the userID using the user email
-  userQuery = "SELECT userID FROM users \
-               WHERE users.email = ?;"
-  userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
+#   # grab the userID using the user email
+#   userQuery = "SELECT userID FROM users \
+#                WHERE users.email = ?;"
+#   userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
 
-  # insert into userEventInfo table that user is interested
-  eventQuery = "INSERT INTO userEventInfo (userID, eventID, commitStatus) \
-                VALUES(?,?,?);"
-  cursor.execute(eventQuery, (userID, eventID, status))
-  database.commit()
+#   # insert into userEventInfo table that user is interested
+#   eventQuery = "INSERT INTO userEventInfo (userID, eventID, commitStatus) \
+#                 VALUES(?,?,?);"
+#   cursor.execute(eventQuery, (userID, eventID, status))
+#   database.commit()
 
-  context = {}
-  context['message'] = "Uploaded"
-  context['status_code'] = 200
+#   context = {}
+#   context['message'] = "Uploaded"
+#   context['status_code'] = 200
   
-  return flask.jsonify(**context)
+#   return flask.jsonify(**context)
 
 
 # curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/events/add/JugglingWithJeff/JuggleWithJeffery/chessmaster333/2483124234 
@@ -214,12 +214,13 @@ def postEventStatus(beginEmail, endEmail, eventID, status):
 @FlockDev.app.route('/events/add/', methods= ['POST'])
 def addEvent():
   # get db
+  print("adding event")
   database = FlockDev.model.get_db()
   cursor = database.cursor()
   
   info = flask.request.get_data().decode('utf-8')
   info = json.loads(info)
-  
+  print(info)
   # get event name, description, and contact information from forms
   eventName = info['eventName']
   eventDesc = info['eventDesc']
@@ -227,12 +228,8 @@ def addEvent():
 
   # from email serach the database for phone and host name
   context = cursor.execute("SELECT fullname, phone FROM users WHERE email = ?;",(email,)).fetchone()
-  print(type(context))
-  print(context)
-
   host = context['fullname']
   phone = context['phone']
-
 
   tagQuery = "SELECT MAX(tagID) FROM tags"
   tagQuery = cursor.execute(tagQuery).fetchone()
@@ -241,19 +238,9 @@ def addEvent():
   if tagQuery is not None:
     tagID = tagQuery["MAX(tagID)"] + 1
 
-  # insert into tag table
+  # insert into tag table, tagID
   tagQuery = "INSERT INTO tags VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-  cursor.execute(tagQuery, (tagID,
-                            info['outdoor_adventures'],
-                            info['cooking'],
-                            info['gaming'],
-                            info['night_life'],
-                            info['swimming'],
-                            info['weight_lifting'],
-                            info['photography'],
-                            info['yoga'],
-                            info['basketball'],
-                            info['dancing']))
+  cursor.execute(tagQuery, (tagID, info['outdoor_adventures'], info['cooking'], info['gaming'], info['night_life'], info['swimming'], info['weight_lifting'], info['photography'], info['yoga'], info['basketball'], info['dancing']))
   database.commit()
 
   eventQuery = "SELECT MAX(eventID) FROM events"
@@ -273,7 +260,7 @@ def addEvent():
 
 # update user info
 # curl -X GET http://localhost:8000/user/set/michjc/umich.edu
-@FlockDev.app.route('/user/set/<beginEmail>/<endEmail>', methods=['POST'])
+@FlockDev.app.route('/user/set/<beginEmail>/<endEmail>/', methods=['POST'])
 def updateUser(beginEmail, endEmail):
   # get db
   database = FlockDev.model.get_db()
@@ -281,45 +268,50 @@ def updateUser(beginEmail, endEmail):
 
   email = beginEmail + '@' + endEmail
 
-  emailQuery = "SELECT email FROM users WHERE email= '" + email + "';"
-  emailQuery = cursor.execute(emailQuery).fetchone()
+  userInfo = "SELECT tagID FROM users WHERE email= '" + email + "';"
+  tagID = cursor.execute(userInfo).fetchone()
+  tagID = tagID['tagID']
 
-  if emailQuery is None:
-    return flask.jsonify(**makeContext("Email does not exist", 400))
+  # if emailQuery is None:
+  #   return flask.jsonify(**makeContext("Email does not exist", 400))
     
-    
-  fullname = flask.request.form['fullname']
-  phone = flask.request.form['phone']
-  picture = flask.request.form['picture']
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
   
-  userQuery = "UPDATE users SET fullname=?, phone=?, picture=? WHERE email=?;"
-  cursor.execute(userQuery, (fullname, phone, picture, email))
+  print("fullname is: " + info['fullname'])
+  userQuery = "UPDATE users SET fullname=?, phone=? WHERE email=?;"
+  cursor.execute(userQuery, (info['fullname'], info['phone'], email))
+  database.commit()
+  
+  print("tagID is " + str(tagID))
+  tagQuery = "UPDATE tags SET outdoor_adventures = ?, cooking = ?, gaming = ?, night_life = ?, swimming = ?, weight_lifting = ?, photography = ?, yoga = ?, basketball = ?, dancing = ? WHERE tagID = ?;"
+  cursor.execute(tagQuery, (info['outdoor_adventures'], info['cooking'], info['gaming'], info['night_life'], info['swimming'], info['weight_lifting'], info['photography'], info['yoga'], info['basketball'], info['dancing'], tagID))
   database.commit()
   
   return flask.jsonify(**makeContext("Updated User Info Successfully", 207))
 
 
-# Get user info
-# curl -X GET http://localhost:8000/user/get/michjc/umich.edu
-# curl -X GET http://localhost:8000/user/get/michjc/umich.ed
-@FlockDev.app.route('/user/get/<beginEmail>/<endEmail>', methods=['GET'])
-def sendUserInfo(beginEmail, endEmail):
-  # get db
-  database = FlockDev.model.get_db()
-  cursor = database.cursor()
+# # Get user info
+# # curl -X GET http://localhost:8000/user/get/michjc/umich.edu
+# # curl -X GET http://localhost:8000/user/get/michjc/umich.ed
+# @FlockDev.app.route('/user/get/<beginEmail>/<endEmail>', methods=['GET'])
+# def sendUserInfo(beginEmail, endEmail):
+#   # get db
+#   database = FlockDev.model.get_db()
+#   cursor = database.cursor()
 
-  email = beginEmail + "@" + endEmail
+#   email = beginEmail + "@" + endEmail
 
-  emailQuery = "SELECT email FROM users WHERE email= '" + email + "';"
-  emailQuery = cursor.execute(emailQuery).fetchone()
+#   emailQuery = "SELECT email FROM users WHERE email= '" + email + "';"
+#   emailQuery = cursor.execute(emailQuery).fetchone()
 
-  if emailQuery is None:
-    return flask.jsonify(**makeContext("Email does not exist", 400))
+#   if emailQuery is None:
+#     return flask.jsonify(**makeContext("Email does not exist", 400))
 
-  userQuery = "SELECT userID, fullname, email, pword, phone, picture, tagID FROM users WHERE email= '" + email + "';"
-  userInfo = cursor.execute(userQuery).fetchone()
-  print(userInfo)
-  return flask.jsonify(**userInfo)
+#   userQuery = "SELECT userID, fullname, email, pword, phone, picture, tagID FROM users WHERE email= '" + email + "';"
+#   userInfo = cursor.execute(userQuery).fetchone()
+#   print(userInfo)
+#   return flask.jsonify(**userInfo)
   
 
 # Get all tags for a user or event

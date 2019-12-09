@@ -59,11 +59,26 @@ export default class CreateEvent extends React.Component{
           <Text style = {styles.headerText}>Create an Event!</Text>
         </View>
         <Formik
-          initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
+          initialValues={{eventName: '', eventDesc: '', eventLocation: '', email: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
-
-            fetch('http://35.2.212.197:8000/events/add/', {
-
+            console.log("Sending values in create event")
+            console.log(JSON.stringify({
+              eventName: values['eventName'],
+              eventDesc: values['eventDesc'],
+              eventLocation: values['eventLocation'],
+              email: values['email'],
+              outdoor_adventures : values['outdoor_adventures'],
+              cooking : values['cooking'],
+              gaming : values['gaming'],
+              night_life : values['night_life'],
+              swimming : values['swimming'],
+              weight_lifting : values['weight_lifting'],
+              photography : values['photography'],
+              yoga : values['yoga'],
+              basketball : values['basketball'],
+              dancing : values['dancing']
+            }))
+            fetch('http://35.2.138.71:8000/events/add/', {
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],
@@ -228,7 +243,7 @@ export default class CreateEvent extends React.Component{
 
               <TouchableOpacity 
                   style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}
+                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 120, borderRadius: 50}}
                   onPress ={formikProps.handleSubmit}>
                       <Text style = {{color: 'white'}}>Submit</Text>
                   

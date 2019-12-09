@@ -28,7 +28,7 @@ const Users = [
 export default class Event extends React.Component{
     constructor(props) {
         
-        super(props);
+        super(props); 
         this.state = {eventList: [], hasFetched: false};
         this.renderCards = this.renderCards.bind(this)
         this.renderCards()

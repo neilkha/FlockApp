@@ -23,7 +23,7 @@ export default class EditProfile extends React.Component{
     renderData(){
       let email = UserProfile.getEmail()
       let splitEmail = email.split('@')
-      fetch('http://35.2.212.197:8000/tags/get/' + splitEmail[0] + "/" + splitEmail[1])
+      fetch('http://35.2.138.71:8000/tags/get/' + splitEmail[0] + "/" + splitEmail[1])
                 .then((response) => response.json())
                 .then((responseJson) => {
                     if(responseJson.length == 0){
@@ -54,19 +54,30 @@ export default class EditProfile extends React.Component{
             onPress={() => this.props.navigation.toggleDrawer()}
           />
           <View style = {styles.header}>
-            <Text style = {{textAlign: 'center',fontSize: 20}}>Edit Profile</Text>
+            <Text style = {styles.headerText}>Edit Profile</Text>
           </View>
           {this.state.hasFetched ? 
           <Formik
-            initialValues={{firstName: '', lastName: '', email: '', phone: '', outdoor_adventures: this.state.tags['outdoor_adventures'], cooking: this.state.tags['cooking'], gaming: this.state.tags['gaming'], night_life: this.state.tags['night_life'], swimming: this.state.tags['swimming'], weight_lifting: this.state.tags['weight_lifting'], photography: this.state.tags['photography'], yoga: this.state.tags['yoga'], basketball: this.state.tags['basketball'], dancing: this.state.tags['dancing']}}
+            initialValues={{fullname: '', phone: '', outdoor_adventures: this.state.tags['outdoor_adventures'], cooking: this.state.tags['cooking'], gaming: this.state.tags['gaming'], night_life: this.state.tags['night_life'], swimming: this.state.tags['swimming'], weight_lifting: this.state.tags['weight_lifting'], photography: this.state.tags['photography'], yoga: this.state.tags['yoga'], basketball: this.state.tags['basketball'], dancing: this.state.tags['dancing']}}
             onSubmit={(values) =>{
-                fetch('http://35.2.212.197:8000/user/set/', {
+                let email = UserProfile.getEmail()
+                let splitEmail = email.split('@')
+                fetch('http://35.2.138.71:8000/user/set/' + splitEmail[0] + '/' + splitEmail[1] + '/', {
                     method: 'POST',
                     body: JSON.stringify({
-                        firstName: values['firstName'],
-                        lastName: values['lastName'],
-                        email: values['email'],
-                        phone: values['phone']
+                        fullname: values['fullname'],
+                        phone: values['phone'],
+                        outdoor_adventures : values['outdoor_adventures'],
+                        cooking : values['cooking'],
+                        gaming : values['gaming'],
+                        night_life: values['night_life'],
+                        swimming: values['swimming'],
+                        weight_lifting: values['weight_lifting'],
+                        photography: values['photography'],
+                        yoga: values['yoga'],
+                        basketball: values['basketball'],
+                        dancing: values['dancing']
+
                     }),
                 }).then((response) => response.json())
                 .then((responseJson) => {
@@ -84,25 +95,16 @@ export default class EditProfile extends React.Component{
           >
               {formikProps =>(
                   <React.Fragment>
-                    <View style ={{marginTop: 30, marginVertical: -10, marginHorizontal: 20}}>
+                    <View style ={{marginTop: 30, marginVertical: 20, marginHorizontal: 20}}>
                         <Text>Name: </Text>
                         <TextInput placeholder={UserProfile.getName()}
                         style={{borderWidth: 1, borderColor: 'black', padding: 10}}
-                        onChangeText={formikProps.handleChange("firstName")}
+                        onChangeText={formikProps.handleChange("fullname")}
                         />
-                        <Text style = {{color: 'red'}}>{formikProps.errors.firstName}</Text>
+                        <Text style = {{color: 'red'}}>{formikProps.errors.fullname}</Text>
                     </View>
 
-                    <View style ={{marginVertical: -10, marginHorizontal: 20}}>
-                        <Text>Email: </Text>
-                        <TextInput placeholder={UserProfile.getEmail()}
-                        style={{borderWidth: 1, borderColor: 'black', paddingBottom: 10}}
-                        onChangeText={formikProps.handleChange("email")}
-                        />
-                        <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
-                    </View>
-
-                    <View style ={{marginVertical: -10, marginHorizontal: 20}}>
+                    <View style ={{marginVertical: 20, marginHorizontal: 20}}>
                         <Text>Phone Number: </Text>
                         <TextInput placeholder={UserProfile.getPhone()}
                         style={{borderWidth: 1, borderColor: 'black', paddingBottom: 10}}
@@ -129,7 +131,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Cooking'
                   checked={formikProps.values.cooking}
-                  onPress={() => formikProps.setFieldValue('cooking', !this.state.tags['cooking'])}
+                  onPress={() => formikProps.setFieldValue('cooking', !formikProps.values.cooking)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -137,8 +139,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Gaming'
-                  checked={this.state.tags['gaming']}
-                  onPress={() => formikProps.setFieldValue('gaming', !this.state.tags['gaming'])}
+                  checked={formikProps.values.gaming}
+                  onPress={() => formikProps.setFieldValue('gaming', !formikProps.values.gaming)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -146,8 +148,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Night Life'
-                  checked={this.state.tags['night_life']}
-                  onPress={() => formikProps.setFieldValue('night_life', !this.state.tags['night_life'])}
+                  checked={formikProps.values.night_life}
+                  onPress={() => formikProps.setFieldValue('night_life', !formikProps.values.night_life)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -164,8 +166,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Weight Lifting'
-                  checked={this.state.tags['weight_lifting']}
-                  onPress={() => formikProps.setFieldValue('weight_lifting', !this.state.tags['weight_lifting'])}
+                  checked={formikProps.values.weight_lifting}
+                  onPress={() => formikProps.setFieldValue('weight_lifting', !formikProps.values.weight_lifting)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -174,7 +176,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Photography'
                   checked={formikProps.values.photography}
-                  onPress={() => formikProps.setFieldValue('photography', !formikProps.values.photograph)}
+                  onPress={() => formikProps.setFieldValue('photography', !formikProps.values.photography)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -182,8 +184,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Basketball'
-                  checked={this.state.tags['basketball']}
-                  onPress={() => formikProps.setFieldValue('basketball', !this.state.tags['basketball'])}
+                  checked={formikProps.values.basketball}
+                  onPress={() => formikProps.setFieldValue('basketball', !formikProps.values.basketball)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -191,8 +193,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Yoga'
-                  checked={this.state.tags['yoga']}
-                  onPress={() => formikProps.setFieldValue('yoga', !this.state.tags['yoga'])}
+                  checked={formikProps.values.yoga}
+                  onPress={() => formikProps.setFieldValue('yoga', !formikProps.values.yoga)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -200,8 +202,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Dancing'
-                  checked={this.state.tags['dancing']}
-                  onPress={() => formikProps.setFieldValue('dancing', !this.state.tags['dancing'])}
+                  checked={formikProps.values.dancing}
+                  onPress={() => formikProps.setFieldValue('dancing', !formikProps.values.dancing)}
                 /> 
               </View> 
 
@@ -216,7 +218,7 @@ export default class EditProfile extends React.Component{
 
                     <TouchableOpacity 
                         style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                        justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}
+                        justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 140, borderRadius: 50}}
                         onPress ={formikProps.handleSubmit}>
                             <Text style = {{color: 'white'}}>Submit</Text>
                     </TouchableOpacity>
