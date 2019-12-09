@@ -9,7 +9,11 @@ import {Header, Icon, Container, Left, Content} from 'native-base'
 import SettingsScreen from './screens/SettingsScreen';
 import CreateEvent from './screens/CreateEvent';
 import Event from './screens/Event';
+
+import MyEvents from './screens/MyEvents';
+
 import UserProfile from './UserProfile';
+
 import {createDrawerNavigator} from 'react-navigation-drawer';
 
 
@@ -81,7 +85,9 @@ class NewUserScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
+
             fetch('http://35.2.212.197:8000/user/create/', {
+
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -192,6 +198,7 @@ class SwipeScreen extends React.Component {
     
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
+
     fetch('https://35.2.212.197:8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
@@ -296,6 +303,7 @@ class LoginScreen extends React.Component {
           initialValues={{email :'', pword: '', fullname: '', phone: ''}}
           onSubmit={(values) => {
             
+
             fetch('http://35.2.212.197:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -345,10 +353,10 @@ class LoginScreen extends React.Component {
               
             
           
-            <View style ={{marginHorizontal: 90}}>
+            <View style ={{marginHorizontal: 140}}>
               <TouchableOpacity style = {{backgroundColor: 'white', alignItems: 'center', 
                                     justifyContent: 'center', padding: 10, borderRadius: 50}}onPress ={formikProps.handleSubmit}>
-                 <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login with Flock</Text>
+                 <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login</Text>
               </TouchableOpacity>
               
             </View>
@@ -385,7 +393,8 @@ const DrawerNavigator = createDrawerNavigator(
   {
       Home: {screen: Event,},
       Settings: {screen: SettingsScreen},
-      CreateEvent: {screen: CreateEvent}
+      MyEvents: {screen: MyEvents},
+      CreateEvent: {screen: CreateEvent},
   },
   DrawerConfig
 );

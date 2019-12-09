@@ -7,61 +7,19 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  button: {
-    marginTop: 32,
-    marginRight: 32,
-    marginLeft: 32,
-    alignItems: 'center',
-    backgroundColor: 'lightsalmon',
-    padding: 10,
-    
-  },
-  form: {
-    marginTop: 32,
-    
+  menuIcon: {
+		zIndex: 9,
+		position: 'absolute',
+		top: 20,
+    left: 20,
   },
   header: {
-    marginTop: 20
+    paddingTop: 20,
+    paddingBottom: 5
   },
-  links: {
-    marginTop: 32,
-
-  },
-  motto: {
-   color: 'blue'
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
+  headerText: {
+    textAlign: 'center',fontSize: 20, fontWeight: 'bold'
+  }
 });
 
 export { styles } 

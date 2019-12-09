@@ -2,6 +2,8 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, AppRegistry, Button, FormLabel, FormInput, FormValidationMessage, View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
 import {Icon} from 'native-base'
 import MenuButton from '../components/MenuButton';
+
+import {styles} from '../styles';
 import UserProfile from '../UserProfile';
 import { Formik } from 'formik';
 import {CheckBox} from 'react-native-elements';
@@ -221,19 +223,23 @@ export default class EditProfile extends React.Component{
               )}
           </Formik>
           </ScrollView>
+
         </View>
       );
     }
   }
-  const styles = StyleSheet.create({
-      menuIcon: {
-          zIndex: 9,
-          position: 'absolute',
-          top: 20,
-        left: 20,
-      },
-      header: {
-          paddingTop: 20,
-          paddingBottom: 5
-      }
-  });
+
+}
+const styles = StyleSheet.create({
+    menuIcon: {
+        zIndex: 9,
+        position: 'absolute',
+        top: 20,
+      left: 20,
+    },
+    header: {
+        paddingTop: 20,
+        paddingBottom: 5
+    }
+});
+
