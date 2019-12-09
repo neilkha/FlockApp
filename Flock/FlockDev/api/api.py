@@ -23,23 +23,27 @@ def login():
   email = info["email"]
   unHashedPass = info["pword"]
   #get password from database corresponding to username
-  returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
+  # returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
+  userInfo = cursor.execute("SELECT fullname, email, pword, phone FROM users WHERE email = ?;",(email,))
 
 
   context = {}
 
   # Redirect to create new account if user doesn't exist, this shit doesnt work rn
-  returnPassword = returnedPassword.fetchone()
+  # returnPassword = returnedPassword.fetchone()
+  userInfo = userInfo.fetchone()
 
-  if(returnPassword is None):
+  if(userInfo is None):
     context['email'] = ""
     return flask.jsonify(**context)
   
 
   
   # return username if the login is successful
-  if(FlockDev.model.passwords_match(unHashedPass, returnPassword['pword'])):
+  if(FlockDev.model.passwords_match(unHashedPass, userInfo['pword'])):
     context['email'] = email
+    context['fullname'] = userInfo['fullname']
+    context['phone'] = userInfo['phone']
     return flask.jsonify(**context)
   else:
     context['email'] = ""

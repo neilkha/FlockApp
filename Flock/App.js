@@ -8,7 +8,9 @@ import { thisExpression } from '@babel/types';
 import {Header, Icon, Container, Left, Content} from 'native-base'
 import SettingsScreen from './screens/SettingsScreen';
 import CreateEvent from './screens/CreateEvent';
+import EditProfile from './screens/EditProfileScreen';
 import Event from './screens/Event';
+import UserProfile from './UserProfile';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 
 
@@ -94,8 +96,9 @@ class NewUserScreen extends React.Component{
               if(responseJson['status'] == "false"){
                 alert("A user already exists with the email " + values['email'] + ". Please try again with another email.")
               }
-              //alert("hello")
-              //alert(responeJson.code)
+              else{
+                alert("Successully made an account!")
+              }
             })
             .catch((error) =>{
               alert(error)
@@ -291,7 +294,7 @@ class LoginScreen extends React.Component {
           </View>
 
           <Formik
-          initialValues={{email :'', pword: ''}}
+          initialValues={{email :'', pword: '', fullname: '', phone: ''}}
           onSubmit={(values) => {
             
             fetch('http://192.168.1.47:8000/login/', {
@@ -306,6 +309,9 @@ class LoginScreen extends React.Component {
                   alert("Email/Password combination not found in our database. Please try again.")
                 }
                 else{
+                  UserProfile.setName(responseJson['fullname'])
+                  UserProfile.setEmail(responseJson['email'])
+                  UserProfile.setPhone(toString(responseJson['phone']))
                   this.props.navigation.navigate('EventScreen', {email: values.email})
                 }
               })
@@ -380,7 +386,8 @@ const DrawerNavigator = createDrawerNavigator(
   {
       Home: {screen: Event,},
       Settings: {screen: SettingsScreen},
-      CreateEvent: {screen: CreateEvent}
+      CreateEvent: {screen: CreateEvent},
+      EditProfile: {screen: EditProfile}
   },
   DrawerConfig
 );
