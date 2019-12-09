@@ -32,13 +32,13 @@ export default class CreateEvent extends React.Component{
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
-            fetch('http://35.0.37.87:8000/events/add/', {
+            fetch('http://192.168.1.47:8000/events/add/', {
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],
                 eventDesc: values['eventDesc'],
                 eventLocation: values['eventLocation'],
-                phone: values['phone'],
+                email: values['email'],
                 outdoor_adventures : values['outdoor_adventures'],
                 cooking : values['cooking'],
                 gaming : values['gaming'],
@@ -55,6 +55,9 @@ export default class CreateEvent extends React.Component{
               if(responseJson['status'] == 'false'){
                 alert("Could not create event.")
               }
+              else{
+                alert("Succesfully created new event!")
+              }
             })
             .catch((error) =>{
               alert(error)
@@ -66,7 +69,7 @@ export default class CreateEvent extends React.Component{
               <View style ={{marginTop: 20, marginHorizontal: 20}}>
                 
                 <Text>Event Name</Text>
-                <TextInput placeholder ="Jane" 
+                <TextInput
                   style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                   onChangeText={formikProps.handleChange("eventName")}
                 />
@@ -78,7 +81,7 @@ export default class CreateEvent extends React.Component{
                 <Text>Describe Your Event: </Text>
                 <TextInput 
                   style={{borderWidth: 1, borderColor: 'black', paddingBottom: 30}}
-                  onChangeText={formikProps.handleChange("lastName")}
+                  onChangeText={formikProps.handleChange("eventDesc")}
                 />
                 <Text style = {{color: 'red'}}>{formikProps.errors.eventDesc}</Text>
               </View>
@@ -87,9 +90,9 @@ export default class CreateEvent extends React.Component{
                 <Text>Contact Information</Text>
                 <TextInput placeholder ="janedoe@gmail.com" 
                   style={{borderWidth: 1, borderColor: 'black', padding: 10}}
-                  onChangeText={formikProps.handleChange("phone")}
+                  onChangeText={formikProps.handleChange("email")}
                 />
-                <Text style = {{color: 'red'}}>{formikProps.errors.phone}</Text>
+                <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
               </View>
               <View style ={{marginVertical: 10, marginHorizontal: 20}}>
                 <Text>Tags:</Text>
@@ -184,10 +187,11 @@ export default class CreateEvent extends React.Component{
                   onPress={() => formikProps.setFieldValue('dancing', !formikProps.values.dancing)}
                 />
               </View>
+
               <TouchableOpacity 
                   style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}>
-                 
+                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}
+                  onPress ={formikProps.handleSubmit}>
                       <Text style = {{color: 'white'}}>Submit</Text>
                   
               </TouchableOpacity>

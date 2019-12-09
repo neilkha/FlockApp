@@ -185,14 +185,28 @@ def postEventStatus(beginEmail, endEmail, eventID, status):
 # curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/events/add/JugglingWithJeff/JuggleWithJeffery/chessmaster333/2483124234 
 # -d '{"outdoor_adventures":"1", "cooking":"0", "gaming":"0", "night_life":"1", "swimming":"0", "weight_lifting":"1", "photography":"0", "yoga":"0", 
 # "basketball":"1", "dancing":"1"}'
-@FlockDev.app.route('/events/add/<name>/<description>/<host>/<phone>', methods= ['POST'])
-def addEvent(name, description, host, phone):
+@FlockDev.app.route('/events/add/', methods= ['POST'])
+def addEvent():
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
   
-  tags = flask.request.get_data().decode('utf-8')
-  tags = json.loads(tags)
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
+  
+  # get event name, description, and contact information from forms
+  eventName = info['eventName']
+  eventDesc = info['eventDesc']
+  email = info['email']
+
+  # from email serach the database for phone and host name
+  context = cursor.execute("SELECT fullname, phone FROM users WHERE email = ?;",(email,)).fetchone()
+  print(type(context))
+  print(context)
+
+  host = context['fullname']
+  phone = context['phone']
+
 
   tagQuery = "SELECT MAX(tagID) FROM tags"
   tagQuery = cursor.execute(tagQuery).fetchone()
@@ -204,16 +218,16 @@ def addEvent(name, description, host, phone):
   # insert into tag table
   tagQuery = "INSERT INTO tags VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
   cursor.execute(tagQuery, (tagID,
-                            tags['outdoor_adventures'],
-                            tags['cooking'],
-                            tags['gaming'],
-                            tags['night_life'],
-                            tags['swimming'],
-                            tags['weight_lifting'],
-                            tags['photography'],
-                            tags['yoga'],
-                            tags['basketball'],
-                            tags['dancing']))
+                            info['outdoor_adventures'],
+                            info['cooking'],
+                            info['gaming'],
+                            info['night_life'],
+                            info['swimming'],
+                            info['weight_lifting'],
+                            info['photography'],
+                            info['yoga'],
+                            info['basketball'],
+                            info['dancing']))
   database.commit()
 
   eventQuery = "SELECT MAX(eventID) FROM events"
@@ -225,7 +239,7 @@ def addEvent(name, description, host, phone):
 
   # insert into event table
   eventQuery = "INSERT INTO events VALUES (?, ?, ?, ?, ?, NULL, ?);"
-  cursor.execute(eventQuery, (eventID, name, description, host, phone, tagID))
+  cursor.execute(eventQuery, (eventID, eventName, eventDesc, host, phone, tagID))
   database.commit()
 
   return flask.jsonify(**makeContext("Added Event Successfully", 207))

@@ -80,7 +80,7 @@ class NewUserScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://10.0.0.25:8000/user/create/', {
+            fetch('http://192.168.1.47:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -190,7 +190,7 @@ class SwipeScreen extends React.Component {
     
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
-    fetch('https://10.0.0.25:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://192.168.1.47:8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -294,7 +294,7 @@ class LoginScreen extends React.Component {
           initialValues={{email :'', pword: ''}}
           onSubmit={(values) => {
             
-            fetch('http://10.0.0.25:8000/login/', {
+            fetch('http://192.168.1.47:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
