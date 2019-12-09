@@ -33,7 +33,7 @@ export default class CreateEvent extends React.Component{
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
-            fetch('http://35.0.37.87:8000/events/add/', {
+            fetch('http://35.2.138.71:8000/events/add/', {
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],

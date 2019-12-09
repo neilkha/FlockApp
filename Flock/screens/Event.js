@@ -54,7 +54,7 @@ export default class Event extends React.Component{
     renderCards(){
       let email = this.props.navigation.getParam('email', 'default value')
       let splitEmail = email.split('@')
-      fetch('http://10.0.0.25:8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
+      fetch('http://35.2.138.71:8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
       .then((response) => response.json())
       .then((responseJson) => {
         if(responseJson.length == 0){
@@ -77,7 +77,7 @@ export default class Event extends React.Component{
   
       })
       .catch((error) =>{
-        alert(error)
+        console.log(error)
         
       });
 
@@ -111,6 +111,77 @@ export default class Event extends React.Component{
                       </View>
                   </View>
               )
+          }
+          }
+          overlayLabels={{
+            bottom: {
+              title: 'BLEAH',
+              style: {
+                label: {
+                  backgroundColor: 'black',
+                  borderColor: 'black',
+                  color: 'white',
+                  borderWidth: 1
+                },
+                wrapper: {
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }
+              }
+            },
+            left: {
+              title: 'NOPE',
+              style: {
+                label: {
+                  backgroundColor: 'black',
+                  borderColor: 'black',
+                  color: 'white',
+                  borderWidth: 1
+                },
+                wrapper: {
+                  flexDirection: 'column',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-start',
+                  marginTop: 30,
+                  marginLeft: -30
+                }
+              }
+            },
+            right: {
+              title: 'LIKE',
+              style: {
+                label: {
+                  backgroundColor: 'black',
+                  borderColor: 'black',
+                  color: 'white',
+                  borderWidth: 1
+                },
+                wrapper: {
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                  marginTop: 30,
+                  marginLeft: 30
+                }
+              }
+            },
+            top: {
+              title: 'SUPER LIKE',
+              style: {
+                label: {
+                  backgroundColor: 'black',
+                  borderColor: 'black',
+                  color: 'white',
+                  borderWidth: 1
+                },
+                wrapper: {
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }
+              }
+            }
           }}
             onSwiped={(cardIndex) => {console.log(cardIndex)}}
             onSwipedAll={() => {}}
