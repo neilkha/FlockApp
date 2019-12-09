@@ -56,6 +56,7 @@ export default class EditProfile extends React.Component{
           <View style = {styles.header}>
             <Text style = {{textAlign: 'center',fontSize: 20}}>Edit Profile</Text>
           </View>
+          {this.state.hasFetched ? 
           <Formik
             initialValues={{firstName: '', lastName: '', email: '', phone: '', outdoor_adventures: this.state.tags['outdoor_adventures'], cooking: this.state.tags['cooking'], gaming: this.state.tags['gaming'], night_life: this.state.tags['night_life'], swimming: this.state.tags['swimming'], weight_lifting: this.state.tags['weight_lifting'], photography: this.state.tags['photography'], yoga: this.state.tags['yoga'], basketball: this.state.tags['basketball'], dancing: this.state.tags['dancing']}}
             onSubmit={(values) =>{
@@ -118,7 +119,7 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Outdoor Adventures'
-                  checked={this.state.tags['outdoor_adventures']}
+                  checked={formikProps.values.outdoor_adventures}
                   onPress={() => {formikProps.setFieldValue('outdoor_adventures', !formikProps.values.outdoor_adventures)}}
                 />
                 <CheckBox
@@ -127,8 +128,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Cooking'
-                  checked={this.state.tags['cooking']}
-                  onPress={() => formikProps.setFieldValue('cooking', !formikProps.values.cooking)}
+                  checked={formikProps.values.cooking}
+                  onPress={() => formikProps.setFieldValue('cooking', !this.state.tags['cooking'])}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -137,7 +138,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Gaming'
                   checked={this.state.tags['gaming']}
-                  onPress={() => formikProps.setFieldValue('gaming', !formikProps.values.gaming)}
+                  onPress={() => formikProps.setFieldValue('gaming', !this.state.tags['gaming'])}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -146,7 +147,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Night Life'
                   checked={this.state.tags['night_life']}
-                  onPress={() => formikProps.setFieldValue('night_life', !formikProps.values.night_life)}
+                  onPress={() => formikProps.setFieldValue('night_life', !this.state.tags['night_life'])}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -154,7 +155,7 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Swimming'
-                  checked={this.state.tags['swimming']}
+                  checked={formikProps.values.swimming}
                   onPress={() => formikProps.setFieldValue('swimming', !formikProps.values.swimming)}
                 />
                 <CheckBox
@@ -164,7 +165,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Weight Lifting'
                   checked={this.state.tags['weight_lifting']}
-                  onPress={() => formikProps.setFieldValue('weight_lifting', !formikProps.values.weight_lifting)}
+                  onPress={() => formikProps.setFieldValue('weight_lifting', !this.state.tags['weight_lifting'])}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -172,8 +173,8 @@ export default class EditProfile extends React.Component{
                   iconType='material'
                   uncheckedIcon='check-box-outline-blank'
                   title='Photography'
-                  checked={this.state.tags['photography']}
-                  onPress={() => formikProps.setFieldValue('photography', !formikProps.values.photography)}
+                  checked={formikProps.values.photography}
+                  onPress={() => formikProps.setFieldValue('photography', !formikProps.values.photograph)}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -182,7 +183,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Basketball'
                   checked={this.state.tags['basketball']}
-                  onPress={() => formikProps.setFieldValue('basketball', !formikProps.values.basketball)}
+                  onPress={() => formikProps.setFieldValue('basketball', !this.state.tags['basketball'])}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -191,7 +192,7 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Yoga'
                   checked={this.state.tags['yoga']}
-                  onPress={() => formikProps.setFieldValue('yoga', !formikProps.values.yoga)}
+                  onPress={() => formikProps.setFieldValue('yoga', !this.state.tags['yoga'])}
                 />
                 <CheckBox
                   containerStyle={styles.checkBoxContainer}
@@ -200,9 +201,9 @@ export default class EditProfile extends React.Component{
                   uncheckedIcon='check-box-outline-blank'
                   title='Dancing'
                   checked={this.state.tags['dancing']}
-                  onPress={() => formikProps.setFieldValue('dancing', !formikProps.values.dancing)}
-                />
-              </View>
+                  onPress={() => formikProps.setFieldValue('dancing', !this.state.tags['dancing'])}
+                /> 
+              </View> 
 
                     {/* <View style ={{marginVertical: -10, marginHorizontal: 20}}>
                         <Text>Profile Picture: </Text>
@@ -221,7 +222,7 @@ export default class EditProfile extends React.Component{
                     </TouchableOpacity>
                   </React.Fragment>
               )}
-          </Formik>
+          </Formik> : <ActivityIndicator />}
           </ScrollView>
 
         </View>
@@ -229,17 +230,6 @@ export default class EditProfile extends React.Component{
     }
   }
 
-}
-const styles = StyleSheet.create({
-    menuIcon: {
-        zIndex: 9,
-        position: 'absolute',
-        top: 20,
-      left: 20,
-    },
-    header: {
-        paddingTop: 20,
-        paddingBottom: 5
-    }
-});
+
+
 
