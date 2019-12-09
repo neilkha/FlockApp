@@ -31,7 +31,7 @@ export default class EditProfile extends React.Component{
           <Formik
             initialValues={{firstName: '', lastName: '', email: '', phone: ''}}
             onSubmit={(values) =>{
-                fetch('http://192.168.1.47:8000/user/set/', {
+                fetch('http://35.2.212.197:8000/user/set/', {
                     method: 'POST',
                     body: JSON.stringify({
                         firstName: values['firstName'],

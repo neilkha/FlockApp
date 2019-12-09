@@ -8,7 +8,6 @@ import { thisExpression } from '@babel/types';
 import {Header, Icon, Container, Left, Content} from 'native-base'
 import SettingsScreen from './screens/SettingsScreen';
 import CreateEvent from './screens/CreateEvent';
-import EditProfile from './screens/EditProfileScreen';
 import Event from './screens/Event';
 import UserProfile from './UserProfile';
 import {createDrawerNavigator} from 'react-navigation-drawer';
@@ -82,7 +81,7 @@ class NewUserScreen extends React.Component{
           initialValues={{firstName :'', lastName: '', email: '', pword: '', phone: ''}}
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
-            fetch('http://192.168.1.47:8000/user/create/', {
+            fetch('http://35.2.212.197:8000/user/create/', {
               method: 'POST',
               body: JSON.stringify({
                 firstName: values['firstName'],
@@ -193,7 +192,7 @@ class SwipeScreen extends React.Component {
     
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
-    fetch('https://192.168.1.47:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://35.2.212.197:8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -297,7 +296,7 @@ class LoginScreen extends React.Component {
           initialValues={{email :'', pword: '', fullname: '', phone: ''}}
           onSubmit={(values) => {
             
-            fetch('http://192.168.1.47:8000/login/', {
+            fetch('http://35.2.212.197:8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -311,7 +310,7 @@ class LoginScreen extends React.Component {
                 else{
                   UserProfile.setName(responseJson['fullname'])
                   UserProfile.setEmail(responseJson['email'])
-                  UserProfile.setPhone(toString(responseJson['phone']))
+                  UserProfile.setPhone(responseJson['phone'])
                   this.props.navigation.navigate('EventScreen', {email: values.email})
                 }
               })
@@ -386,8 +385,7 @@ const DrawerNavigator = createDrawerNavigator(
   {
       Home: {screen: Event,},
       Settings: {screen: SettingsScreen},
-      CreateEvent: {screen: CreateEvent},
-      EditProfile: {screen: EditProfile}
+      CreateEvent: {screen: CreateEvent}
   },
   DrawerConfig
 );

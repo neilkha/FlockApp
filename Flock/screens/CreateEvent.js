@@ -4,15 +4,40 @@ import {Icon} from 'native-base';
 import MenuButton from '../components/MenuButton';
 import {Formik } from 'formik';
 import {CheckBox} from 'react-native-elements';
+import ImagePicker from'react-native-image-picker';
 import * as yup from 'yup';
 export default class CreateEvent extends React.Component{
   constructor(props) {
     super(props);
+    this.handlePhotoUpload = this.handlePhotoUpload.bind(this)
+    this.state = {photo: null}
   }
 
   static navigationOptions = {
     drawerLabel: 'Create Event',
     
+  };
+
+  handlePhotoUpload() {
+    const options = {
+      noData: false
+    };
+    
+    ImagePicker.showImagePicker(options, (response) => {
+      // console.log("response = ", response)
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+        this.setState({
+          photo: source,
+        })
+      }
+    });
   };
 
   render() {
@@ -32,7 +57,7 @@ export default class CreateEvent extends React.Component{
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
-            fetch('http://192.168.1.47:8000/events/add/', {
+            fetch('http://35.2.212.197:8000/events/add/', {
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],
@@ -94,6 +119,13 @@ export default class CreateEvent extends React.Component{
                 />
                 <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
               </View>
+
+              <View style={{ flex: 1, alignIterms: "center", justifyContent: "center"}}>
+                <TouchableOpacity style = {{marginHorizontal: 120, padding: 10, borderRadius: 20, alignItems: 'center', backgroundColor: 'grey'}} onPress = {this.handlePhotoUpload}>
+                  <Text style = {{color: 'white'}}>Choose Photo</Text>
+                </TouchableOpacity>
+              </View>
+              
               <View style ={{marginVertical: 10, marginHorizontal: 20}}>
                 <Text>Tags:</Text>
                 <CheckBox
