@@ -23,23 +23,27 @@ def login():
   email = info["email"]
   unHashedPass = info["pword"]
   #get password from database corresponding to username
-  returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
+  # returnedPassword = cursor.execute("SELECT pword FROM users WHERE email = ?;",(email,))
+  userInfo = cursor.execute("SELECT fullname, email, pword, phone FROM users WHERE email = ?;",(email,))
 
 
   context = {}
 
   # Redirect to create new account if user doesn't exist, this shit doesnt work rn
-  returnPassword = returnedPassword.fetchone()
+  # returnPassword = returnedPassword.fetchone()
+  userInfo = userInfo.fetchone()
 
-  if(returnPassword is None):
+  if(userInfo is None):
     context['email'] = ""
     return flask.jsonify(**context)
   
 
   
   # return username if the login is successful
-  if(FlockDev.model.passwords_match(unHashedPass, returnPassword['pword'])):
+  if(FlockDev.model.passwords_match(unHashedPass, userInfo['pword'])):
     context['email'] = email
+    context['fullname'] = userInfo['fullname']
+    context['phone'] = userInfo['phone']
     return flask.jsonify(**context)
   else:
     context['email'] = ""
@@ -74,10 +78,32 @@ def newUser():
     context = {}
     context["status"] = "false"
     return flask.jsonify(**context)
-  
-  loginQuery = "INSERT INTO users (fullname, email, pword, phone, picture, tagID) VALUES (?, ?, ?, ?, NULL, NULL);"
-  cursor.execute(loginQuery, (fullname, info['email'], hashPass, info['phone']))
+
+  tagQuery = "SELECT MAX(tagID) FROM tags"
+  tagQuery = cursor.execute(tagQuery).fetchone()
+
+  tagID = 0
+  if tagQuery is not None:
+    tagID = tagQuery["MAX(tagID)"] + 1
+
+  tagQuery = "INSERT INTO tags VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+  cursor.execute(tagQuery, (tagID,
+                            True,
+                            False,
+                            False,
+                            False,
+                            False,
+                            False,
+                            False,
+                            False,
+                            False,
+                            False))
   database.commit()
+
+  loginQuery = "INSERT INTO users (fullname, email, pword, phone, picture, tagID) VALUES (?, ?, ?, ?, NULL, ?);"
+  cursor.execute(loginQuery, (fullname, info['email'], hashPass, info['phone'], tagID))
+  database.commit()
+
   return flask.jsonify(**makeContext("New Account Created", 200))
   
   
@@ -185,14 +211,28 @@ def postEventStatus(beginEmail, endEmail, eventID, status):
 # curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/events/add/JugglingWithJeff/JuggleWithJeffery/chessmaster333/2483124234 
 # -d '{"outdoor_adventures":"1", "cooking":"0", "gaming":"0", "night_life":"1", "swimming":"0", "weight_lifting":"1", "photography":"0", "yoga":"0", 
 # "basketball":"1", "dancing":"1"}'
-@FlockDev.app.route('/events/add/<name>/<description>/<host>/<phone>', methods= ['POST'])
-def addEvent(name, description, host, phone):
+@FlockDev.app.route('/events/add/', methods= ['POST'])
+def addEvent():
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
   
-  tags = flask.request.get_data().decode('utf-8')
-  tags = json.loads(tags)
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
+  
+  # get event name, description, and contact information from forms
+  eventName = info['eventName']
+  eventDesc = info['eventDesc']
+  email = info['email']
+
+  # from email serach the database for phone and host name
+  context = cursor.execute("SELECT fullname, phone FROM users WHERE email = ?;",(email,)).fetchone()
+  print(type(context))
+  print(context)
+
+  host = context['fullname']
+  phone = context['phone']
+
 
   tagQuery = "SELECT MAX(tagID) FROM tags"
   tagQuery = cursor.execute(tagQuery).fetchone()
@@ -204,16 +244,16 @@ def addEvent(name, description, host, phone):
   # insert into tag table
   tagQuery = "INSERT INTO tags VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
   cursor.execute(tagQuery, (tagID,
-                            tags['outdoor_adventures'],
-                            tags['cooking'],
-                            tags['gaming'],
-                            tags['night_life'],
-                            tags['swimming'],
-                            tags['weight_lifting'],
-                            tags['photography'],
-                            tags['yoga'],
-                            tags['basketball'],
-                            tags['dancing']))
+                            info['outdoor_adventures'],
+                            info['cooking'],
+                            info['gaming'],
+                            info['night_life'],
+                            info['swimming'],
+                            info['weight_lifting'],
+                            info['photography'],
+                            info['yoga'],
+                            info['basketball'],
+                            info['dancing']))
   database.commit()
 
   eventQuery = "SELECT MAX(eventID) FROM events"
@@ -225,7 +265,7 @@ def addEvent(name, description, host, phone):
 
   # insert into event table
   eventQuery = "INSERT INTO events VALUES (?, ?, ?, ?, ?, NULL, ?);"
-  cursor.execute(eventQuery, (eventID, name, description, host, phone, tagID))
+  cursor.execute(eventQuery, (eventID, eventName, eventDesc, host, phone, tagID))
   database.commit()
 
   return flask.jsonify(**makeContext("Added Event Successfully", 207))
@@ -285,21 +325,23 @@ def sendUserInfo(beginEmail, endEmail):
 # Get all tags for a user or event
 # curl -X GET http://localhost:8000/tags/get/2
 # curl -X GET http://localhost:8000/tags/get/8
-@FlockDev.app.route('/tags/get/<tagID>', methods=['GET'])
-def getAllTags(tagID):
+@FlockDev.app.route('/tags/get/<beginEmail>/<endEmail>/', methods=['GET'])
+def getAllTags(beginEmail, endEmail):
   # get db
   database = FlockDev.model.get_db()
   cursor = database.cursor()
 
-  tagQuery = "SELECT MAX(tagID) FROM tags"
-  tagQuery = cursor.execute(tagQuery).fetchone()
+  email = beginEmail + "@" + endEmail
 
-  if tagQuery['MAX(tagID)'] < int(tagID):
-    return flask.jsonify(**makeContext("Tag ID does not exist", 400))
-  
-  tagQuery = "SELECT * FROM tags WHERE tagID=?;"
-  tagInfo = cursor.execute(tagQuery, (tagID)).fetchone()
-  
+  context = cursor.execute("SELECT tagID FROM users WHERE email = ?;",(email,)).fetchone()
+  tagID = context['tagID']
+
+  tagInfo = cursor.execute("SELECT * FROM tags WHERE tagID =?;", (tagID,)).fetchone()
+
+  print(tagInfo)
+  print(type(tagInfo))
+  # if tagQuery['MAX(tagID)'] < int(tagID):
+  #   return flask.jsonify(**makeContext("Tag ID does not exist", 400))
   return flask.jsonify(**tagInfo)
 
 

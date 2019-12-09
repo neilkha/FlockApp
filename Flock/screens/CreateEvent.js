@@ -4,16 +4,41 @@ import {Icon} from 'native-base';
 import MenuButton from '../components/MenuButton';
 import {Formik } from 'formik';
 import {CheckBox} from 'react-native-elements';
+import ImagePicker from'react-native-image-picker';
 import * as yup from 'yup';
 import {styles} from '../styles';
 export default class CreateEvent extends React.Component{
   constructor(props) {
     super(props);
+    this.handlePhotoUpload = this.handlePhotoUpload.bind(this)
+    this.state = {photo: null}
   }
 
   static navigationOptions = {
     drawerLabel: 'Create Event',
     
+  };
+
+  handlePhotoUpload() {
+    const options = {
+      noData: false
+    };
+    
+    ImagePicker.showImagePicker(options, (response) => {
+      // console.log("response = ", response)
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+        this.setState({
+          photo: source,
+        })
+      }
+    });
   };
 
   render() {
@@ -24,6 +49,9 @@ export default class CreateEvent extends React.Component{
           name="md-menu"
           color="#000000"
           size={32}
+      
+      
+      
           style={styles.menuIcon}
           onPress={() => this.props.navigation.toggleDrawer()}
         />
@@ -33,13 +61,15 @@ export default class CreateEvent extends React.Component{
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
-            fetch('http://35.2.138.71:8000/events/add/', {
+
+            fetch('http://35.2.212.197:8000/events/add/', {
+
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],
                 eventDesc: values['eventDesc'],
                 eventLocation: values['eventLocation'],
-                phone: values['phone'],
+                email: values['email'],
                 outdoor_adventures : values['outdoor_adventures'],
                 cooking : values['cooking'],
                 gaming : values['gaming'],
@@ -56,6 +86,9 @@ export default class CreateEvent extends React.Component{
               if(responseJson['status'] == 'false'){
                 alert("Could not create event.")
               }
+              else{
+                alert("Succesfully created new event!")
+              }
             })
             .catch((error) =>{
               alert(error)
@@ -67,7 +100,7 @@ export default class CreateEvent extends React.Component{
               <View style ={{marginTop: 20, marginHorizontal: 20}}>
                 
                 <Text>Event Name</Text>
-                <TextInput placeholder ="Jane" 
+                <TextInput
                   style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                   onChangeText={formikProps.handleChange("eventName")}
                 />
@@ -79,7 +112,7 @@ export default class CreateEvent extends React.Component{
                 <Text>Describe Your Event: </Text>
                 <TextInput 
                   style={{borderWidth: 1, borderColor: 'black', paddingBottom: 30}}
-                  onChangeText={formikProps.handleChange("lastName")}
+                  onChangeText={formikProps.handleChange("eventDesc")}
                 />
                 <Text style = {{color: 'red'}}>{formikProps.errors.eventDesc}</Text>
               </View>
@@ -88,10 +121,17 @@ export default class CreateEvent extends React.Component{
                 <Text>Contact Information</Text>
                 <TextInput placeholder ="janedoe@gmail.com" 
                   style={{borderWidth: 1, borderColor: 'black', padding: 10}}
-                  onChangeText={formikProps.handleChange("phone")}
+                  onChangeText={formikProps.handleChange("email")}
                 />
-                <Text style = {{color: 'red'}}>{formikProps.errors.phone}</Text>
+                <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
               </View>
+
+              <View style={{ flex: 1, alignIterms: "center", justifyContent: "center"}}>
+                <TouchableOpacity style = {{marginHorizontal: 120, padding: 10, borderRadius: 20, alignItems: 'center', backgroundColor: 'grey'}} onPress = {this.handlePhotoUpload}>
+                  <Text style = {{color: 'white'}}>Choose Photo</Text>
+                </TouchableOpacity>
+              </View>
+              
               <View style ={{marginVertical: 10, marginHorizontal: 20}}>
                 <Text>Tags:</Text>
                 <CheckBox
@@ -185,10 +225,11 @@ export default class CreateEvent extends React.Component{
                   onPress={() => formikProps.setFieldValue('dancing', !formikProps.values.dancing)}
                 />
               </View>
+
               <TouchableOpacity 
                   style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}>
-                 
+                  justifyContent: 'center', padding: 10, marginVertical: 20, marginHorizontal: 50, borderRadius: 50}}
+                  onPress ={formikProps.handleSubmit}>
                       <Text style = {{color: 'white'}}>Submit</Text>
                   
               </TouchableOpacity>
