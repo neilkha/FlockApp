@@ -340,10 +340,10 @@ class LoginScreen extends React.Component {
               
             
           
-            <View style ={{marginHorizontal: 90}}>
+            <View style ={{marginHorizontal: 140}}>
               <TouchableOpacity style = {{backgroundColor: 'white', alignItems: 'center', 
                                     justifyContent: 'center', padding: 10, borderRadius: 50}}onPress ={formikProps.handleSubmit}>
-                 <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login with Flock</Text>
+                 <Text style = {{fontFamily: 'sans-serif-light', color: '#ff6969'}}>Login</Text>
               </TouchableOpacity>
               
             </View>

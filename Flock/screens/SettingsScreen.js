@@ -2,6 +2,8 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, AppRegistry, Button, FormLabel, FormInput, FormValidationMessage, View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
 import {Icon} from 'native-base'
 import MenuButton from '../components/MenuButton';
+import {styles} from '../styles';
+
 export default class SettingsScreen extends React.Component{
   constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ export default class SettingsScreen extends React.Component{
 
   render() {
     return (
-      <View style ={{flex: 1, backgroundColor: '#ff6969'}}>
+      <View >
         <Icon
           name="md-menu"
           color="#000000"
@@ -21,19 +23,15 @@ export default class SettingsScreen extends React.Component{
           style={styles.menuIcon}
           onPress={() => this.props.navigation.toggleDrawer()}
         />
+        <View style = {styles.header}>
+          <Text style = {styles.headerText}>Edit Your Profile</Text>
+        </View>
         <View>
-          
+          {/* <Formik>
+            
+          </Formik> */}
         </View>
       </View>
     );
   }
 }
-const styles = StyleSheet.create({
-	menuIcon: {
-		zIndex: 9,
-		position: 'absolute',
-		top: 20,
-    left: 20,
-    backgroundColor: '#ff6969'
-	}
-});

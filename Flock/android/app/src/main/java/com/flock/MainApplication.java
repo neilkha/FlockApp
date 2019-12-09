@@ -8,6 +8,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.entria.views.RNViewOverflowPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.facebook.react.ReactNativeHost;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
    	 protected List<ReactPackage> getPackages() {
         	return Arrays.<ReactPackage>asList(
          	 new MainReactPackage(),
+            new RNViewOverflowPackage(),
             new ReanimatedPackage(),
            new RNGestureHandlerPackage()
      	 );

@@ -5,6 +5,7 @@ import MenuButton from '../components/MenuButton';
 import {Formik } from 'formik';
 import {CheckBox} from 'react-native-elements';
 import * as yup from 'yup';
+import {styles} from '../styles';
 export default class CreateEvent extends React.Component{
   constructor(props) {
     super(props);
@@ -27,7 +28,7 @@ export default class CreateEvent extends React.Component{
           onPress={() => this.props.navigation.toggleDrawer()}
         />
         <View style = {styles.header}>
-          <Text style = {{textAlign: 'center',fontSize: 20}}>Create an Event!</Text>
+          <Text style = {styles.headerText}>Create an Event!</Text>
         </View>
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
@@ -201,15 +202,3 @@ export default class CreateEvent extends React.Component{
     );
   }
 }
-const styles = StyleSheet.create({
-	menuIcon: {
-		zIndex: 9,
-		position: 'absolute',
-		top: 20,
-    left: 20,
-  },
-  header: {
-    paddingTop: 20,
-    paddingBottom: 5
-  }
-})
