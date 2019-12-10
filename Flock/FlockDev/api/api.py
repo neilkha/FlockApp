@@ -106,7 +106,7 @@ def newUser():
 
   return flask.jsonify(**makeContext("New Account Created", 200))
   
-  
+
 @FlockDev.app.route('/events/getAvailable/<beginEmail>/<endEmail>', methods=['GET'])
 def availableEvents(beginEmail, endEmail):
   """Update Events."""
@@ -115,6 +115,8 @@ def availableEvents(beginEmail, endEmail):
   cursor = database.cursor()
 
   email = beginEmail + '@' + endEmail
+
+  # may have to rework these two queries
 
   # return all the events that a user has not seen
   eventQuery = "CREATE VIEW View_Events (eventID) AS \
@@ -144,34 +146,42 @@ def availableEvents(beginEmail, endEmail):
   return flask.jsonify(**eventInfo)
 
 
-# @FlockDev.app.route('/events/getStatusEvents/<beginEmail>/<endEmail>/<status>',
-#                     methods = ['GET'])
-# def getStatusEvents(beginEmail, endEmail, status):
-#   """View what events a user is interested in"""
-#   # get db
-#   database = FlockDev.model.get_db()
-#   cursor = database.cursor()
+# 0 = interested, 1 = not interested, 2 = haven't seen
+@FlockDev.app.route('/events/getStatusEvents/<beginEmail>/<endEmail>/', methods = ['GET'])
+def getStatusEvents(beginEmail, endEmail):
+  """View what events a user is interested in"""
+  # get db
+  database = FlockDev.model.get_db()
+  cursor = database.cursor()
 
-#   email = beginEmail + '@' + endEmail
+  email = beginEmail + '@' + endEmail
 
-#   if int(status) < 0 or int(status) > 2:
-#     return flask.jsonify(**makeContext("Error: Status does not exist", 404))
-    
-#   eventQuery = "SELECT DISTINCT UEI.eventID \
-#                 FROM users U, userEventInfo UEI \
-#                 WHERE U.email = ? AND U.userID = UEI.userID \
-#                 AND UEI.commitStatus = ?"
-#   context = cursor.execute(eventQuery, (email, status,)).fetchall()
+  commitStatus = 0
 
-#   eventInfo = {}
-#   i = 0
-#   for element in context:
-#     eventID = element['eventID']
-#     query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
-#     eventInfo[str(i)] = cursor.execute(query).fetchone()
-#     i += 1
+  if int(commitStatus) < 0 or int(commitStatus) > 2:
+    return flask.jsonify(**makeContext("Error: Status does not exist", 404))
+
+  userID = cursor.execute("SELECT userID FROM users WHERE email = ?;",(email,)).fetchone()
+  userID = userID['userID']
+
+  context = cursor.execute("SELECT eventID from userEventInfo WHERE userID = ? AND commitStatus =?;", (userID, commitStatus)).fetchall()
+
+  # eventQuery = "SELECT DISTINCT UEI.eventID \
+  #               FROM users U, userEventInfo UEI \
+  #               WHERE U.email = ? AND U.userID = UEI.userID \
+  #               AND UEI.commitStatus = ?"
+  # context = cursor.execute(eventQuery, (email, commitStatus,)).fetchall()
+
+  # dictionary in back end and then list in front end is causing error for my events page
+  eventInfo = {}
+  i = 0
+  for element in context:
+    eventID = element['eventID']
+    query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
+    eventInfo[str(i)] = cursor.execute(query).fetchone()
+    i += 1
   
-#   return flask.jsonify(**eventInfo)
+  return flask.jsonify(**eventInfo)
 
 
 # @FlockDev.app.route('/events/postEventStatus/<beginEmail>/<endEmail>/<eventID>/<status>',
@@ -214,20 +224,21 @@ def availableEvents(beginEmail, endEmail):
 @FlockDev.app.route('/events/add/', methods= ['POST'])
 def addEvent():
   # get db
-  print("adding event")
   database = FlockDev.model.get_db()
   cursor = database.cursor()
   
   info = flask.request.get_data().decode('utf-8')
   info = json.loads(info)
-  print(info)
+
   # get event name, description, and contact information from forms
   eventName = info['eventName']
   eventDesc = info['eventDesc']
   email = info['email']
 
   # from email serach the database for phone and host name
-  context = cursor.execute("SELECT fullname, phone FROM users WHERE email = ?;",(email,)).fetchone()
+  context = cursor.execute("SELECT userID, fullname, phone FROM users WHERE email = ?;",(email,)).fetchone()
+  
+  userID = context['userID']
   host = context['fullname']
   phone = context['phone']
 
@@ -253,6 +264,12 @@ def addEvent():
   # insert into event table
   eventQuery = "INSERT INTO events VALUES (?, ?, ?, ?, ?, NULL, ?);"
   cursor.execute(eventQuery, (eventID, eventName, eventDesc, host, phone, tagID))
+  database.commit()
+
+  # have to insert into UserEvent table as well
+  commitStatus = 0
+  userEventQuery = "INSERT INTO userEventInfo VALUES(?, ?, ?);"
+  cursor.execute(userEventQuery, (userID, eventID, commitStatus))
   database.commit()
 
   return flask.jsonify(**makeContext("Added Event Successfully", 207))

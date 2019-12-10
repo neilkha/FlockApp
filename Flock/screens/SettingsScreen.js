@@ -7,8 +7,9 @@ import {styles} from '../styles';
 import UserProfile from '../UserProfile';
 import { Formik } from 'formik';
 import {CheckBox} from 'react-native-elements';
+import globalVal from '../globalVal';
 
-export default class EditProfile extends React.Component{
+export default class SettingsScreen extends React.Component{
     constructor(props) {
       super(props);
       this.renderData = this.renderData.bind(this)
@@ -23,23 +24,23 @@ export default class EditProfile extends React.Component{
     renderData(){
       let email = UserProfile.getEmail()
       let splitEmail = email.split('@')
-      fetch('http://35.2.138.71:8000/tags/get/' + splitEmail[0] + "/" + splitEmail[1])
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    if(responseJson.length == 0){
-                        alert("No user with this tagID")
-                    }
-                    else{
-                        for (var key in responseJson){
-                          this.state.tags[key] = responseJson[key]
-                        }
-                        console.log(this.state.tags)
-                        this.setState({hasFetched: true})
-                    }
-                })
-                .catch((error) => {
-                    alert(error)
-                })
+      fetch('http://' + globalVal.ip_address + ':8000/tags/get/' + splitEmail[0] + "/" + splitEmail[1])
+        .then((response) => response.json())
+        .then((responseJson) => {
+            if(responseJson.length == 0){
+                alert("No user with this tagID")
+            }
+            else{
+                for (var key in responseJson){
+                  this.state.tags[key] = responseJson[key]
+                }
+                console.log(this.state.tags)
+                this.setState({hasFetched: true})
+            }
+        })
+        .catch((error) => {
+            alert(error)
+        })
     }
   
     render() {
@@ -62,7 +63,7 @@ export default class EditProfile extends React.Component{
             onSubmit={(values) =>{
                 let email = UserProfile.getEmail()
                 let splitEmail = email.split('@')
-                fetch('http://35.2.138.71:8000/user/set/' + splitEmail[0] + '/' + splitEmail[1] + '/', {
+                fetch('http://' + globalVal.ip_address + ':8000/user/set/' + splitEmail[0] + '/' + splitEmail[1] + '/', {
                     method: 'POST',
                     body: JSON.stringify({
                         fullname: values['fullname'],

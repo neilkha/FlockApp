@@ -6,17 +6,15 @@ import {styles} from './styles.js';
 import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
 import {Header, Icon, Container, Left, Content} from 'native-base'
+
 import SettingsScreen from './screens/SettingsScreen';
 import CreateEvent from './screens/CreateEvent';
 import Event from './screens/Event';
-
 import MyEvents from './screens/MyEvents';
 
 import UserProfile from './UserProfile';
 
 import {createDrawerNavigator} from 'react-navigation-drawer';
-
-
 import 'react-native-gesture-handler'
 import {
   createSwitchNavigator,
@@ -24,8 +22,11 @@ import {
   DrawerIterms,
   SafeAreaView
 } from 'react-navigation';
+
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import MenuButton from './components/MenuButton';
+import globalVal from './globalVal'
+
 // import {SwipeScreen} from './screens/SwipeScreen'
 
 //var FBLoginButton = require('./FBLoginButton');
@@ -86,7 +87,7 @@ class NewUserScreen extends React.Component{
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
 
-            fetch('http://35.2.138.71:8000/user/create/', {
+            fetch('http://' + globalVal.ip_address + ':8000/user/create/', {
 
               method: 'POST',
               body: JSON.stringify({
@@ -103,6 +104,7 @@ class NewUserScreen extends React.Component{
               }
               else{
                 alert("Successully made an account!")
+                this.props.navigation.navigate('Home')
               }
             })
             .catch((error) =>{
@@ -199,7 +201,7 @@ class SwipeScreen extends React.Component {
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
 
-    fetch('https://35.2.138.71:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://' + globalVal.ip_address + ':8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -302,9 +304,7 @@ class LoginScreen extends React.Component {
           <Formik
           initialValues={{email :'', pword: '', fullname: '', phone: ''}}
           onSubmit={(values) => {
-            
-
-            fetch('http://35.2.138.71:8000/login/', {
+            fetch('http://' + globalVal.ip_address + ':8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -325,9 +325,6 @@ class LoginScreen extends React.Component {
               .catch((error) =>{
                 alert(error)
               });
-              
-            
-
             }}
           
             validationSchema = {validationScheme}
@@ -391,7 +388,7 @@ const DashboardTabNavigator = createBottomTabNavigator(
 )
 const DrawerNavigator = createDrawerNavigator(
   {
-      Home: {screen: Event,},
+      Home: {screen: Event},
       Settings: {screen: SettingsScreen},
       MyEvents: {screen: MyEvents},
       CreateEvent: {screen: CreateEvent},

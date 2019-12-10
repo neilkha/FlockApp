@@ -7,6 +7,10 @@ import {CheckBox} from 'react-native-elements';
 import ImagePicker from'react-native-image-picker';
 import * as yup from 'yup';
 import {styles} from '../styles';
+import globalVal from '../globalVal';
+import AppNavigator from '../App';
+
+
 export default class CreateEvent extends React.Component{
   constructor(props) {
     super(props);
@@ -49,9 +53,6 @@ export default class CreateEvent extends React.Component{
           name="md-menu"
           color="#000000"
           size={32}
-      
-      
-      
           style={styles.menuIcon}
           onPress={() => this.props.navigation.toggleDrawer()}
         />
@@ -61,24 +62,7 @@ export default class CreateEvent extends React.Component{
         <Formik
           initialValues={{eventName: '', eventDesc: '', eventLocation: '', email: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
-            console.log("Sending values in create event")
-            console.log(JSON.stringify({
-              eventName: values['eventName'],
-              eventDesc: values['eventDesc'],
-              eventLocation: values['eventLocation'],
-              email: values['email'],
-              outdoor_adventures : values['outdoor_adventures'],
-              cooking : values['cooking'],
-              gaming : values['gaming'],
-              night_life : values['night_life'],
-              swimming : values['swimming'],
-              weight_lifting : values['weight_lifting'],
-              photography : values['photography'],
-              yoga : values['yoga'],
-              basketball : values['basketball'],
-              dancing : values['dancing']
-            }))
-            fetch('http://35.2.138.71:8000/events/add/', {
+            fetch('http://' + globalVal.ip_address + ':8000/events/add/', {
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],
@@ -103,6 +87,7 @@ export default class CreateEvent extends React.Component{
               }
               else{
                 alert("Succesfully created new event!")
+                this.props.navigation.navigate('Home')
               }
             })
             .catch((error) =>{
