@@ -177,45 +177,91 @@ def getStatusEvents(beginEmail, endEmail):
   i = 0
   for element in context:
     eventID = element['eventID']
-    query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
+    query = "SELECT eventID, eventName, eventDescription, phone, host FROM EVENTS WHERE eventID == " + str(eventID) + ";"
     eventInfo[str(i)] = cursor.execute(query).fetchone()
     i += 1
   
   return flask.jsonify(**eventInfo)
 
 
-# @FlockDev.app.route('/events/postEventStatus/<beginEmail>/<endEmail>/<eventID>/<status>',
-#                     methods = ['POST'])
-# def postEventStatus(beginEmail, endEmail, eventID, status):
-#   """Update the table to reflect a user has seen and is interested."""
-#   # get db
-#   database = FlockDev.model.get_db()
-#   cursor = database.cursor()
+@FlockDev.app.route('/events/postEventStatus/<beginEmail>/<endEmail>/',
+                    methods = ['POST'])
+def postEventStatus(beginEmail, endEmail):
+  """Update the table to reflect a user has seen and is interested."""
+  # get db
+  database = FlockDev.model.get_db()
+  cursor = database.cursor()
 
-#   email = beginEmail + '@' + endEmail
+  email = beginEmail + '@' + endEmail
 
-#   if int(status) < 0 or int(status) > 2:
-#     context = {}
-#     context['s not exist"
-#     context['status_code'] = 404
-#     return flask.jsonify(**context)
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
 
-#   # grab the userID using the user email
-#   userQuery = "SELECT userID FROM users \
-#                WHERE users.email = ?;"
-#   userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
+  eventID = info['eventID']
+  commitStatus = info['interested']
+  print(commitStatus)
 
-#   # insert into userEventInfo table that user is interested
-#   eventQuery = "INSERT INTO userEventInfo (userID, eventID, commitStatus) \
-#                 VALUES(?,?,?);"
-#   cursor.execute(eventQuery, (userID, eventID, status))
-#   database.commit()
+  if int(commitStatus) < 0 or int(commitStatus) > 2:
+    context = {}
+    context['status_code'] = 404
+    return flask.jsonify(**context)
 
-#   context = {}
-#   context['message'] = "Uploaded"
-#   context['status_code'] = 200
+  # grab the userID using the user email
+  userQuery = "SELECT userID FROM users \
+               WHERE users.email = ?;"
+  userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
+
+  # insert into userEventInfo table that user is interested
+  eventQuery = "INSERT INTO userEventInfo (userID, eventID, commitStatus) \
+                VALUES(?,?,?);"
+  cursor.execute(eventQuery, (userID, eventID, commitStatus))
+  database.commit()
+
+  context = {}
+  context['message'] = "Uploaded"
+  context['status_code'] = 200
   
-#   return flask.jsonify(**context)
+  return flask.jsonify(**context)
+
+@FlockDev.app.route('/events/updateEventStatus/<beginEmail>/<endEmail>/',
+                    methods = ['POST'])
+def updateEventStatus(beginEmail, endEmail):
+  """Update the table to reflect a user has seen and is interested."""
+  # get db
+  database = FlockDev.model.get_db()
+  cursor = database.cursor()
+
+  email = beginEmail + '@' + endEmail
+
+  info = flask.request.get_data().decode('utf-8')
+  info = json.loads(info)
+
+  eventID = info['eventID']
+  commitStatus = 1
+
+  if int(commitStatus) < 0 or int(commitStatus) > 2:
+    context = {}
+    context['status_code'] = 404
+    return flask.jsonify(**context)
+
+  # grab the userID using the user email
+  userQuery = "SELECT userID FROM users \
+               WHERE users.email = ?;"
+  userID = cursor.execute(userQuery, (email,)).fetchone()["userID"]
+
+  print(userID)
+  print(eventID)
+  print(commitStatus)
+  # insert into userEventInfo table that user is interested
+  userQuery = "UPDATE userEventInfo SET commitStatus=? WHERE userID=? AND eventID=?;"
+  cursor.execute(userQuery, (commitStatus, userID, eventID))
+  database.commit()
+
+  context = {}
+  context['message'] = "Updated"
+  context['status_code'] = 200
+  
+  return flask.jsonify(**context)
 
 
 # curl -g -X POST -H 'Content-Type:application/json' http://localhost:8000/events/add/JugglingWithJeff/JuggleWithJeffery/chessmaster333/2483124234 
@@ -238,6 +284,7 @@ def addEvent():
   # from email serach the database for phone and host name
   context = cursor.execute("SELECT userID, fullname, phone FROM users WHERE email = ?;",(email,)).fetchone()
   
+  print(context)
   userID = context['userID']
   host = context['fullname']
   phone = context['phone']

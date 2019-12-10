@@ -9,6 +9,7 @@ import * as yup from 'yup';
 import {styles} from '../styles';
 import globalVal from '../globalVal';
 import AppNavigator from '../App';
+import UserProfile from '../UserProfile'
 
 
 export default class CreateEvent extends React.Component{
@@ -60,15 +61,16 @@ export default class CreateEvent extends React.Component{
           <Text style = {styles.headerText}>Create an Event!</Text>
         </View>
         <Formik
-          initialValues={{eventName: '', eventDesc: '', eventLocation: '', email: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
+          initialValues={{eventName: '', eventDesc: '', eventLocation: '', phone: '', outdoor_adventures: false, cooking: false, gaming: false, night_life: false, swimming: false, weight_lifting: false, photography: false, yoga: false, basketball: false, dancing: false}}
           onSubmit={(values) =>{
+            let email_u = UserProfile.getEmail()
             fetch('http://' + globalVal.ip_address + ':8000/events/add/', {
               method: 'POST',
               body: JSON.stringify({
                 eventName: values['eventName'],
                 eventDesc: values['eventDesc'],
                 eventLocation: values['eventLocation'],
-                email: values['email'],
+                email: email_u,
                 outdoor_adventures : values['outdoor_adventures'],
                 cooking : values['cooking'],
                 gaming : values['gaming'],
@@ -87,7 +89,7 @@ export default class CreateEvent extends React.Component{
               }
               else{
                 alert("Succesfully created new event!")
-                this.props.navigation.navigate('Home')
+                this.props.navigation.navigate('MyEvents', {refresh: true})
               }
             })
             .catch((error) =>{
@@ -115,15 +117,6 @@ export default class CreateEvent extends React.Component{
                   onChangeText={formikProps.handleChange("eventDesc")}
                 />
                 <Text style = {{color: 'red'}}>{formikProps.errors.eventDesc}</Text>
-              </View>
-
-              <View style ={{marginVertical: 10, marginHorizontal: 20}}>
-                <Text>Contact Information</Text>
-                <TextInput placeholder ="janedoe@gmail.com" 
-                  style={{borderWidth: 1, borderColor: 'black', padding: 10}}
-                  onChangeText={formikProps.handleChange("email")}
-                />
-                <Text style = {{color: 'red'}}>{formikProps.errors.email}</Text>
               </View>
 
               <View style={{ flex: 1, alignIterms: "center", justifyContent: "center"}}>

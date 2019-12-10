@@ -7,19 +7,19 @@ import {Formik} from 'formik';
 import Swiper from 'react-native-deck-swiper'
 import MenuButton from '../components/MenuButton';
 import globalVal from '../globalVal';
+import UserProfile from '../UserProfile';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIDTH = Dimensions.get('window').width
-const Users = [
-  { id: "1", uri: require('../var/uploads/joggingWithJag.jpeg') },
-  { id: "2", uri: require('../var/uploads/HikingWithFriends.jpeg') },
-  { id: "3", uri: require('../var/uploads/YogaWithFriends.jpeg') },
-]
+
+
 export default class Event extends React.Component{
     constructor(props) {
         super(props); 
-        this.state = {eventList: [], hasFetched: false};
+        this.state = {eventList: [], hasFetched: false, totalEvents: 0};
         this.renderCards = this.renderCards.bind(this)
+        this.handleSwipeRight = this.handleSwipeRight.bind(this)
+        this.handleSwipeLeft = this.handleSwipeLeft.bind(this)
         this.renderCards()
     }
     
@@ -28,8 +28,63 @@ export default class Event extends React.Component{
 
     };
     
+    handleSwipeRight(index){
+      let email = UserProfile.getEmail()
+      let splitEmail = email.split('@')
+      fetch('http://' + globalVal.ip_address + ':8000/events/postEventStatus/' + splitEmail[0] + "/" + splitEmail[1] + "/", {
+        method: 'POST',
+        body: JSON.stringify({
+          eventID: this.state.eventList[index]['eventID'],
+          interested: true
+          
+        }),
+      }).then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson['status_code'] == 404){
+          alert("couldn't add to database")
+        }
+        else{
+          alert("success adding event")
+          this.setState({totalEvents: this.state.totalEvents - 1})
+          console.log("Decrementing total events + ")
+          console.log(this.state.totalEvents)
+        }
+      })
+       
+      .catch((error) =>{
+        alert(error)
+      });
+    };
+    
+    handleSwipeLeft(index){
+      let email = UserProfile.getEmail()
+      let splitEmail = email.split('@')
+      fetch('http://' + globalVal.ip_address + ':8000/events/postEventStatus/' + splitEmail[0] + "/" + splitEmail[1] + "/", {
+        method: 'POST',
+        body: JSON.stringify({
+          eventID: this.state.eventList[index]['eventID'],
+          interested: false
+          
+        }),
+      }).then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson['status_code'] == 404){
+          alert("couldn't add to database")
+        }
+        else{
+          alert("success adding event")
+          this.setState({totalEvents: this.state.totalEvents - 1})
+          console.log("Decrementing total events + ")
+          console.log(this.state.totalEvents)
+        }
+      }) 
+      .catch((error) =>{
+        alert(error)
+      });
+    };
+
     renderCards(){
-      let email = this.props.navigation.getParam('email', 'default value')
+      let email = UserProfile.getEmail()
       let splitEmail = email.split('@')
       fetch('http://' + globalVal.ip_address + ':8000/events/getAvailable/' + splitEmail[0] + "/" + splitEmail[1])
       .then((response) => response.json())
@@ -44,7 +99,7 @@ export default class Event extends React.Component{
           }
           console.log("eventList is ")
           console.log(this.state.eventList)
-          this.setState({hasFetched: true})
+          this.setState({hasFetched: true, totalEvents: this.state.eventList.length})
           console.log(this.state)
         }
       })
@@ -63,13 +118,15 @@ export default class Event extends React.Component{
             size={32}
             style={styles.menuIcon}
             onPress={() => this.props.navigation.toggleDrawer()}
-            />
-            <View style = {styles.header}>
-              <Text style = {styles.headerText}>Flock</Text>
-            </View>
+            />  
+
+          <View style = {styles.header}>
+            <Text style = {styles.headerText}>Flock</Text>
+          </View>
 
           <View style={styleTrial.container}>
-            {this.state.hasFetched ?
+            {this.state.hasFetched ? ((this.state.totalEvents == 0) ? <Text style = {styles.noEventText}> NO EVENTS TO SHOW</Text> :
+            
             <Swiper 
             cards={this.state.eventList}
             renderCard={(card) => {
@@ -86,6 +143,12 @@ export default class Event extends React.Component{
               )
             }
           }
+          onSwipedRight = {(index) =>{
+            this.handleSwipeRight(index)
+          }}
+          onSwipedRight = {(index) =>{
+            this.handleSwipeLeft(index)
+          }}
           overlayLabels={{
             bottom: {
               title: 'BLEAH',
@@ -104,7 +167,7 @@ export default class Event extends React.Component{
               }
             },
             left: {
-              title: 'NOPE',
+              title: 'Not Interested',
               style: {
                 label: {
                   backgroundColor: 'black',
@@ -122,7 +185,7 @@ export default class Event extends React.Component{
               }
             },
             right: {
-              title: 'LIKE',
+              title: 'Interested',
               style: {
                 label: {
                   backgroundColor: 'black',
@@ -161,7 +224,7 @@ export default class Event extends React.Component{
             cardIndex={0}
             backgroundColor={'#4FD0E9'}
             stackSize= {3}
-            verticalSwipe = {false}></Swiper> : <ActivityIndicator />}
+            verticalSwipe = {false}></Swiper>) : <ActivityIndicator />}
 
           </View>
 
@@ -174,10 +237,11 @@ export default class Event extends React.Component{
   const styleTrial = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#F5FCFF"
+      backgroundColor: "#ff6969",
+      zIndex: 10
     },
     card: {
-      height: SCREEN_HEIGHT - 200,
+      height: globalVal.SCREEN_HEIGHT - 200,
       borderRadius: 4,
       borderWidth: 2,
       borderRadius: 20,

@@ -11,7 +11,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import CreateEvent from './screens/CreateEvent';
 import Event from './screens/Event';
 import MyEvents from './screens/MyEvents';
-
+import LogoutScreen from './screens/LogoutScreen';
 import UserProfile from './UserProfile';
 
 import {createDrawerNavigator} from 'react-navigation-drawer';
@@ -41,8 +41,6 @@ const DrawerConfig = {
 		// return(<MenuDrawer navigation={navigation} />)
 	
 }
-
-  
 
 
 // const MyApp = createAppContainer(DrawerNavigator);
@@ -104,7 +102,7 @@ class NewUserScreen extends React.Component{
               }
               else{
                 alert("Successully made an account!")
-                this.props.navigation.navigate('Home')
+                this.props.navigation.navigate('Login')
               }
             })
             .catch((error) =>{
@@ -319,6 +317,7 @@ class LoginScreen extends React.Component {
                   UserProfile.setName(responseJson['fullname'])
                   UserProfile.setEmail(responseJson['email'])
                   UserProfile.setPhone(responseJson['phone'])
+                  
                   this.props.navigation.navigate('EventScreen', {email: values.email})
                 }
               })
@@ -335,12 +334,14 @@ class LoginScreen extends React.Component {
                   
                   <Text style = {{fontFamily: 'sans-serif-light'}}>Email</Text>
                   <TextInput placeholder ="janedoe@gmail.com" 
+                    initialValues = ""
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("email")}
                   />
                   <Text style = {{fontFamily: 'sans-serif-light', color: 'red'}}>{formikProps.errors.email}</Text>
                   <Text style = {{fontFamily: 'sans-serif-light'}}>Password</Text>
                   <TextInput placeholder ="password" 
+                    initialValues = ""
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("pword")}
                     secureTextEntry
@@ -392,13 +393,14 @@ const DrawerNavigator = createDrawerNavigator(
       Settings: {screen: SettingsScreen},
       MyEvents: {screen: MyEvents},
       CreateEvent: {screen: CreateEvent},
+      Logout: {screen: LogoutScreen},
   },
   DrawerConfig
 );
 
 const AppNavigator = createStackNavigator({
   // login screen
-  Home: {
+  Login: {
     screen: LoginScreen,
     navigationOptions: {
       header: null,
@@ -421,7 +423,7 @@ const AppNavigator = createStackNavigator({
   
 },
 {
-  initialRouteName: 'Home'
+  initialRouteName: 'Login'
 });
 
 export default createAppContainer(AppNavigator);
