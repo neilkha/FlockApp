@@ -14,14 +14,14 @@ VALUES (1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1),
 (7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO events(eventID, eventName, eventDescription, host, phone, picture, tagID)
-VALUES (1, 'Hiking with Friends', 'Looking to go hiking in Ann Arbor', 'deorio', 2483124234, 'HikingWithFriends.jpeg', 4),
-(2, 'Yoga with Friends', 'Looking to do Yoga in Ann Arbor', 'jag', 2483124234, 'JoggingWithJag.jpg', 5),
-(3, 'Jogging with Jag', 'Looking to go jogging in Ann Arbor', 'jag', 2483124234, 'YogaWithFriends.jpg', 6);
+VALUES (1, 'Hiking with Friends', 'Looking to go hiking in Ann Arbor', 'deorio', '2483124234', 'HikingWithFriends.jpeg', 4),
+(2, 'Yoga with Friends', 'Looking to do Yoga in Ann Arbor', 'jag', '2483124234', 'JoggingWithJag.jpg', 5),
+(3, 'Jogging with Jag', 'Looking to go jogging in Ann Arbor', 'jag', '2483124234', 'YogaWithFriends.jpg', 6);
 
 INSERT INTO userEventInfo(userID, eventID, commitStatus)
-VALUES (1, 1, 2),
-(2, 1, 2),
-(3, 2, 2),
+VALUES (1, 1, 1),
+(2, 1, 1),
+(3, 2, 1),
 (3, 1, 0),
 (2, 2, 0),
 (2, 3, 0);

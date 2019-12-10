@@ -1,1 +1,1 @@
-from FlockDev.api.api import login, newUser, availableEvents, addEvent, updateUser, getAllTags
+from FlockDev.api.api import login, newUser, availableEvents, addEvent, updateUser, getAllTags, getStatusEvents, postEventStatus, updateEventStatus

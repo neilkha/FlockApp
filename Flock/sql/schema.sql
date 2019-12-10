@@ -29,7 +29,7 @@ CREATE TABLE events(
   eventName VARCHAR(100) NOT NULL,
   eventDescription VARCHAR(200) NOT NULL,
   host VARCHAR(40) NOT NULL,
-  phone INTEGER NOT NULL,
+  phone VARCHAR(256) NOT NULL,
   picture VARCHAR(200),
   tagID INTEGER,
   PRIMARY KEY(eventID),
@@ -43,5 +43,5 @@ CREATE TABLE userEventInfo(
   PRIMARY KEY(userID, eventID),
   FOREIGN KEY(userID) REFERENCES users ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY(eventID) REFERENCES events ON DELETE CASCADE ON UPDATE CASCADE
-  CONSTRAINT Chck_Status CHECK (commitStatus IN (0, 1, 2))
+  CONSTRAINT Chck_Status CHECK (commitStatus IN (0, 1))
 );

@@ -6,17 +6,15 @@ import {styles} from './styles.js';
 import * as yup from 'yup';
 import { thisExpression } from '@babel/types';
 import {Header, Icon, Container, Left, Content} from 'native-base'
+
 import SettingsScreen from './screens/SettingsScreen';
 import CreateEvent from './screens/CreateEvent';
 import Event from './screens/Event';
-
 import MyEvents from './screens/MyEvents';
-
+import LogoutScreen from './screens/LogoutScreen';
 import UserProfile from './UserProfile';
 
 import {createDrawerNavigator} from 'react-navigation-drawer';
-
-
 import 'react-native-gesture-handler'
 import {
   createSwitchNavigator,
@@ -24,8 +22,11 @@ import {
   DrawerIterms,
   SafeAreaView
 } from 'react-navigation';
+
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import MenuButton from './components/MenuButton';
+import globalVal from './globalVal'
+
 // import {SwipeScreen} from './screens/SwipeScreen'
 
 //var FBLoginButton = require('./FBLoginButton');
@@ -40,8 +41,6 @@ const DrawerConfig = {
 		// return(<MenuDrawer navigation={navigation} />)
 	
 }
-
-  
 
 
 // const MyApp = createAppContainer(DrawerNavigator);
@@ -86,7 +85,7 @@ class NewUserScreen extends React.Component{
           onSubmit={(values) =>{
             //alert(JSON.stringify(values))
 
-            fetch('http://35.2.138.71:8000/user/create/', {
+            fetch('http://' + globalVal.ip_address + ':8000/user/create/', {
 
               method: 'POST',
               body: JSON.stringify({
@@ -103,6 +102,7 @@ class NewUserScreen extends React.Component{
               }
               else{
                 alert("Successully made an account!")
+                this.props.navigation.navigate('Login')
               }
             })
             .catch((error) =>{
@@ -199,7 +199,7 @@ class SwipeScreen extends React.Component {
     let email = this.props.navigation.getParam('email').split("@")
     console.log("calling fetch from swipescreen")
 
-    fetch('https://35.2.138.71:8000/events/' + email[0] + "/" + email[1])
+    fetch('https://' + globalVal.ip_address + ':8000/events/' + email[0] + "/" + email[1])
     .then((response) =>{
       console.log("we got a response from api")
     })
@@ -302,9 +302,7 @@ class LoginScreen extends React.Component {
           <Formik
           initialValues={{email :'', pword: '', fullname: '', phone: ''}}
           onSubmit={(values) => {
-            
-
-            fetch('http://35.2.138.71:8000/login/', {
+            fetch('http://' + globalVal.ip_address + ':8000/login/', {
                 method: 'POST',
                 body: JSON.stringify({
                   email: values['email'],
@@ -319,15 +317,13 @@ class LoginScreen extends React.Component {
                   UserProfile.setName(responseJson['fullname'])
                   UserProfile.setEmail(responseJson['email'])
                   UserProfile.setPhone(responseJson['phone'])
+                  
                   this.props.navigation.navigate('EventScreen', {email: values.email})
                 }
               })
               .catch((error) =>{
                 alert(error)
               });
-              
-            
-
             }}
           
             validationSchema = {validationScheme}
@@ -338,12 +334,14 @@ class LoginScreen extends React.Component {
                   
                   <Text style = {{fontFamily: 'sans-serif-light'}}>Email</Text>
                   <TextInput placeholder ="janedoe@gmail.com" 
+                    initialValues = ""
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("email")}
                   />
                   <Text style = {{fontFamily: 'sans-serif-light', color: 'red'}}>{formikProps.errors.email}</Text>
                   <Text style = {{fontFamily: 'sans-serif-light'}}>Password</Text>
                   <TextInput placeholder ="password" 
+                    initialValues = ""
                     style={{borderWidth: 1, borderColor: 'black', padding: 10}}
                     onChangeText={formikProps.handleChange("pword")}
                     secureTextEntry
@@ -391,17 +389,18 @@ const DashboardTabNavigator = createBottomTabNavigator(
 )
 const DrawerNavigator = createDrawerNavigator(
   {
-      Home: {screen: Event,},
+      Home: {screen: Event},
       Settings: {screen: SettingsScreen},
       MyEvents: {screen: MyEvents},
       CreateEvent: {screen: CreateEvent},
+      Logout: {screen: LogoutScreen},
   },
   DrawerConfig
 );
 
 const AppNavigator = createStackNavigator({
   // login screen
-  Home: {
+  Login: {
     screen: LoginScreen,
     navigationOptions: {
       header: null,
@@ -424,7 +423,7 @@ const AppNavigator = createStackNavigator({
   
 },
 {
-  initialRouteName: 'Home'
+  initialRouteName: 'Login'
 });
 
 export default createAppContainer(AppNavigator);
