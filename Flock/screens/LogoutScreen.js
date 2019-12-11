@@ -17,7 +17,7 @@ export default class LogoutScreen extends React.Component {
             'Confirmation required',
             'Do you really want to logout?',
             [{text: 'Accept', onPress: () => {this.props.navigation.navigate('Login')}},
-            {text: 'Cancel'}]
+            {text: 'Cancel', onPress: () => {this.props.navigation.navigate('Home')}}]
         )
     }
 

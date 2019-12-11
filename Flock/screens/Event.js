@@ -44,7 +44,7 @@ export default class Event extends React.Component{
           alert("couldn't add to database")
         }
         else{
-          alert("success adding event")
+          
           this.setState({totalEvents: this.state.totalEvents - 1})
           console.log("Decrementing total events + ")
           console.log(this.state.totalEvents)
@@ -72,7 +72,7 @@ export default class Event extends React.Component{
           alert("couldn't add to database")
         }
         else{
-          alert("success adding event")
+          
           this.setState({totalEvents: this.state.totalEvents - 1})
           console.log("Decrementing total events + ")
           console.log(this.state.totalEvents)
@@ -109,6 +109,7 @@ export default class Event extends React.Component{
     };
     
     render(){
+      
       return (
         <View style ={{flex: 1}}>
           {/* menu button works if you put icon inside a scroll view but it fucks up layout */}
@@ -125,7 +126,7 @@ export default class Event extends React.Component{
           </View>
 
           <View style={styleTrial.container}>
-            {this.state.hasFetched ? ((this.state.totalEvents == 0) ? <Text style = {styles.noEventText}> NO EVENTS TO SHOW</Text> :
+            {this.state.hasFetched ? ((this.state.totalEvents == 0) ? <Text style = {styles.noEventText}> Look at you! You've swiped through all the events in your area</Text> :
             
             <Swiper 
             cards={this.state.eventList}
@@ -136,13 +137,22 @@ export default class Event extends React.Component{
                         <Text style={styleTrial.eventTitle}>{card.eventName}</Text>
                       </View>
                       <View>
-                        <Text style = {styleTrial.eventDesc}>Description: {card.eventDescription}</Text>
+                        <Text style = {styleTrial.eventDesc}>Description: {card.eventDescription}
+                        {"\n"}
+                        Hosted by: {card.host}
+                        {"\n"}
+                        Contact Information: {card.phone}
+                        </Text>
                         {/* cards/events that are swipped right need to be inserted into the UserEvents table */}
+                      </View>
+                      <View>
+                        
                       </View>
                   </View>
               )
             }
           }
+          backgroundColor={'white'}
           onSwipedRight = {(index) =>{
             this.handleSwipeRight(index)
           }}
@@ -167,10 +177,10 @@ export default class Event extends React.Component{
               }
             },
             left: {
-              title: 'Not Interested',
+              title: 'Nah',
               style: {
                 label: {
-                  backgroundColor: 'black',
+                  backgroundColor: 'red',
                   borderColor: 'black',
                   color: 'white',
                   borderWidth: 1
@@ -185,10 +195,10 @@ export default class Event extends React.Component{
               }
             },
             right: {
-              title: 'Interested',
+              title: 'Yes!',
               style: {
                 label: {
-                  backgroundColor: 'black',
+                  backgroundColor: 'green',
                   borderColor: 'black',
                   color: 'white',
                   borderWidth: 1
@@ -222,7 +232,7 @@ export default class Event extends React.Component{
             onSwiped={(cardIndex) => {console.log(cardIndex)}}
             onSwipedAll={() => {}}
             cardIndex={0}
-            backgroundColor={'#4FD0E9'}
+            backgroundColor={'#ff6969'}
             stackSize= {3}
             verticalSwipe = {false}></Swiper>) : <ActivityIndicator />}
 
@@ -237,8 +247,8 @@ export default class Event extends React.Component{
   const styleTrial = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#ff6969",
-      zIndex: 10
+      backgroundColor: 	'#ff6969',
+      
     },
     card: {
       height: globalVal.SCREEN_HEIGHT - 200,

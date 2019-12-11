@@ -136,7 +136,7 @@ def availableEvents(beginEmail, endEmail):
   i = 0
   for element in context:
     eventID = element['eventID']
-    query = "SELECT eventID, eventName, eventDescription, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
+    query = "SELECT eventID, eventName, eventDescription, host, phone, picture FROM EVENTS WHERE eventID == " + str(eventID) + ";"
     eventInfo[str(i)] = cursor.execute(query).fetchone()
     i += 1
 

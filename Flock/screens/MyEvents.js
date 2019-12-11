@@ -36,10 +36,10 @@ export default class MyEvents extends React.Component{
     .then((response) => response.json())
     .then((responseJson) => {
       if(responseJson['status_code'] == 200){
-        alert('success in updating commit status')
+        
       }
       else{
-        alert('failed updating commit status')
+        
       }
     })
     .then(() => {this.renderEvents()})
@@ -144,7 +144,7 @@ export default class MyEvents extends React.Component{
                       
                     </Text>
                     <TouchableOpacity style = {{backgroundColor: '#ff6969', alignItems: 'center', 
-                          justifyContent: 'center', padding: 10, marginHorizontal: 120, borderRadius: 50}} 
+                           padding: 10, marginHorizontal: 120, marginBottom: 20, borderRadius: 50}} 
                           onPress = {() => {this.updateCommitStatus(item.eventID)}}>
                         <Text >Delete</Text>
                     </TouchableOpacity>

@@ -14,7 +14,7 @@ import MyEvents from './screens/MyEvents';
 import LogoutScreen from './screens/LogoutScreen';
 import UserProfile from './UserProfile';
 
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createDrawerNavigator, DrawerItems} from 'react-navigation-drawer';
 import 'react-native-gesture-handler'
 import {
   createSwitchNavigator,
@@ -32,12 +32,31 @@ import globalVal from './globalVal'
 //var FBLoginButton = require('./FBLoginButton');
 
 
+const DrawerContent = (props) => (
+  <View>
+    <View
+      style={{
+        backgroundColor: 'black',
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <Text style={{ color: 'white', fontSize: 15, padding: 10 }}>
+        Welcome, {UserProfile.getName()}
+      </Text>
+    </View>
+    <DrawerItems {...props} />
+    
+  </View>
+)
 
 const WIDTH = Dimensions.get('window').width;
 
 const DrawerConfig = {
     drawerWidth: WIDTH*0.5,
-    // contentComponent: ({ navigation }) => {
+
+    contentComponent: DrawerContent
 		// return(<MenuDrawer navigation={navigation} />)
 	
 }
@@ -395,6 +414,7 @@ const DrawerNavigator = createDrawerNavigator(
       CreateEvent: {screen: CreateEvent},
       Logout: {screen: LogoutScreen},
   },
+  //{contentComponent: DrawerContent},
   DrawerConfig
 );
 

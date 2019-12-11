@@ -47,6 +47,11 @@ export default class CreateEvent extends React.Component{
   };
 
   render() {
+    const validationScheme = yup.object().shape({
+      eventName: yup.string().required().label("Name"),
+      eventDesc: yup.string().required().label("Description"),
+
+    })
     return (
       <View style ={{}}>
         <ScrollView>
@@ -96,6 +101,7 @@ export default class CreateEvent extends React.Component{
               alert(error)
             })
           }}
+          validationSchema = {validationScheme}
         >
           {formikProps =>(
             <React.Fragment>

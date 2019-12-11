@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     color: 'white',
     textAlignVertical: 'center',
-    textAlign: 'center'
+    textAlign: 'center',
+    top: globalVal.SCREEN_HEIGHT / 2.5
   }
 });
 
