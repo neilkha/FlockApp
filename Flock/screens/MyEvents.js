@@ -116,6 +116,14 @@ export default class MyEvents extends React.Component{
                 <Text style = {styles.headerText}>My Events</Text>
             </View>
             <View style={styles.MainContainer}>
+              <View style = {{alignItems: 'center'}}>
+              <Icon 
+              
+              name = "sync"
+              size = {25}
+              onPress = {() => {this.renderEvents()}}
+              />
+              </View>
               {this.state.hasFetched ? 
                 <FlatList
                 data={this.state.eventList}
